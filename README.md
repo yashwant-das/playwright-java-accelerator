@@ -115,7 +115,7 @@ mvn allure:serve
 
 ## Configuration
 
-The framework uses YAML configuration files located in `src/test/resources/config/`.
+The framework uses YAML configuration files located in `src/test/resources/config/` as the single source of truth for all configuration settings.
 
 Example configuration (qa.yaml):
 ```yaml
@@ -132,7 +132,53 @@ browser:
 screenshot:
   takeOnFailure: true
   fullPage: true
+
+testExecution:
+  parallel: true     # enable/disable parallel execution
+  threadCount: 3     # number of parallel threads to use
 ```
+
+### Configuration Management
+
+The framework uses a configuration management system that:
+- Centralizes all settings in YAML configuration files
+- Supports environment-specific configurations
+- Allows runtime overrides via system properties
+- Uses TestNG listeners for dynamic configuration
+
+Common configuration overrides:
+```bash
+# Override browser settings
+mvn test -Dbrowser.type=firefox -Dbrowser.headless=true
+
+# Override parallel execution
+mvn test -DtestExecution.parallel=false
+mvn test -DtestExecution.threadCount=4
+
+# Override environment
+mvn test -Denvironment=qa
+```
+
+### Parallel Execution
+
+The framework supports dynamic parallel execution configuration through the YAML config file. Parallel execution can be:
+- Enabled/disabled via YAML configuration
+- Controlled at runtime via system properties
+- Configured for number of parallel threads
+- Applied at the method level for maximum parallelization
+
+To modify parallel execution settings:
+1. Via YAML (qa.yaml):
+   ```yaml
+   testExecution:
+     parallel: true
+     threadCount: 3
+   ```
+
+2. Via command line:
+   ```bash
+   mvn test -DtestExecution.parallel=true -DtestExecution.threadCount=4
+   ```
 
 ## Included Test Examples
 
