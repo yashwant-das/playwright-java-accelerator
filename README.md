@@ -113,6 +113,44 @@ mvn allure:report
 mvn allure:serve
 ```
 
+### Logging Configuration
+
+The framework uses SLF4J with Logback for comprehensive logging. Logs are configured in `src/test/resources/logback.xml`.
+
+#### Log Files Location
+- **Main log file**: `logs/playwright-tests.log`
+- **Archived logs**: `logs/archived/playwright-tests.YYYY-MM-DD.i.log`
+
+#### Log Rotation Policy
+- Log files are automatically rotated when:
+  - Size reaches 10MB
+  - A new day starts
+- Retention policy:
+  - Keeps logs for 30 days
+  - Total size cap of 100MB for all archived logs
+
+#### Log Levels
+Default log levels are configured as follows:
+- Framework code (io.github.mypixelquest.pja): DEBUG
+- TestNG: INFO
+- Playwright: INFO
+- Root logger: INFO
+
+#### Customizing Logging
+You can modify logging behavior by editing `logback.xml`:
+- Change log levels
+- Modify rotation policies
+- Add new appenders
+- Customize log patterns
+
+Example log output:
+```
+2025-04-13 00:07:32.290 [main] INFO  i.g.m.pja.utils.ConfigReader - Loading configuration
+2025-04-13 00:07:32.546 [TestNG-1] DEBUG i.g.m.pja.base.BaseTest - Setting up browser
+```
+
+Console output uses a more concise format with highlighted log levels and cyan logger names for better readability.
+
 ## Configuration
 
 The framework uses YAML configuration files located in `src/test/resources/config/` as the single source of truth for all configuration settings.
