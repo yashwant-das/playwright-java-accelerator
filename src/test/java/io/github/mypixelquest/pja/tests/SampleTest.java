@@ -7,67 +7,87 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
+import io.qameta.allure.Story;
 import org.assertj.core.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 /**
- * Sample test class demonstrating how to use the framework
+ * Sample test class for Appium Documentation website
  */
-@Epic("Sample Tests")
-@Feature("Basic Functionality")
+@Epic("Documentation Tests")
+@Feature("Appium Documentation")
 public class SampleTest extends BaseTest {
     private static final Logger log = LoggerFactory.getLogger(SampleTest.class);
 
     /**
-     * Sample test that demonstrates how to use Page Objects and assertions
+     * Test that verifies navigation to the Quickstart section
      */
-    @Test(description = "Verify page title")
-    @Description("This test verifies that the homepage title contains the expected value")
+    @Test(description = "Navigate to Quickstart section")
+    @Description("This test navigates to the Quickstart section and verifies the title")
     @Severity(SeverityLevel.NORMAL)
-    public void verifyPageTitle() {
-        log.info("Running sample test: Verify page title");
+    @Story("Documentation Navigation")
+    public void navigateToQuickstartSection() {
+        log.info("Running test: Navigate to Quickstart section");
         
-        // Get the Page instance from BaseTest (via Optional)
         getCurrentPage().ifPresent(page -> {
-            // Create a Page Object
+            // Create home page and navigate to Appium docs
             HomePage homePage = new HomePage(page);
+            homePage.navigate();
             
-            // Perform actions and assertions
-            String pageTitle = homePage.getTitle();
-            log.info("Page title: {}", pageTitle);
+            // Verify page loaded correctly
+            Assertions.assertThat(homePage.isLoaded())
+                    .as("Appium documentation page should be loaded")
+                    .isTrue();
             
-            // Using AssertJ for assertions
-            Assertions.assertThat(pageTitle)
-                    .as("Page title should contain 'Example Domain'")
-                    .contains("Example Domain");
+            // Navigate to Quickstart section
+            homePage.navigateToSection("Quickstart");
+            
+            // Get the documentation title and verify it
+            String sectionTitle = homePage.getDocumentationTitle();
+            log.info("Section title: {}", sectionTitle);
+            
+            // Verify the section title contains "Quickstart"
+            Assertions.assertThat(sectionTitle)
+                    .as("Section title should contain 'Quickstart'")
+                    .containsIgnoringCase("quickstart");
         });
     }
 
     /**
-     * Sample test that demonstrates how to perform a search
+     * Test that searches for specific documentation content
      */
-    @Test(description = "Perform search")
-    @Description("This test performs a search and verifies the URL changes")
+    @Test(description = "Search Appium documentation")
+    @Description("This test performs a search in the Appium docs and verifies results are returned")
     @Severity(SeverityLevel.CRITICAL)
-    public void performSearch() {
-        log.info("Running sample test: Perform search");
+    @Story("Documentation Search")
+    public void searchAppiumDocumentation() {
+        log.info("Running test: Search Appium documentation");
         
         getCurrentPage().ifPresent(page -> {
-            // Create a Page Object
+            // Create home page and navigate to Appium docs
             HomePage homePage = new HomePage(page);
+            homePage.navigate();
             
-            // Perform search
-            homePage.search("playwright java");
+            // Perform search for "write a test"
+            homePage.search("write a test");
             
-            // Get the URL after search
+            // Get search result count
+            int resultCount = homePage.getSearchResultCount();
+            log.info("Search result count: {}", resultCount);
+            
+            // Verify we have search results
+            Assertions.assertThat(resultCount)
+                    .as("Search should return at least one result")
+                    .isGreaterThan(0);
+            
+            // Verify current URL contains search term
             String currentUrl = homePage.getCurrentUrl();
             log.info("Current URL after search: {}", currentUrl);
             
-            // Using AssertJ for assertions
             Assertions.assertThat(currentUrl)
-                    .as("URL should contain search term")
+                    .as("URL should indicate search was performed")
                     .contains("search");
         });
     }
