@@ -3,15 +3,20 @@ environment:
   baseUrl: https://playwright.dev/
 
 browser:
-  type: chromium  # chromium, firefox, or webkit
-  headless: false  # run tests in headless mode
-  slowMo: 0       # milliseconds to wait between actions
-  timeout: 30000  # default timeout in milliseconds
-  
+  type: chromium
+  headless: true
+  slowMo: 0
+  timeout: 30000
+
 screenshot:
   takeOnFailure: true
   fullPage: true
 
 testExecution:
-  parallel: true     # enable/disable parallel execution
-  threadCount: 3     # number of parallel threads to use
+  parallel: true
+  threadCount: 3
+
+retry:
+  enabled: true
+  maxRetries: 2
+  delayBetweenRetries: 1000

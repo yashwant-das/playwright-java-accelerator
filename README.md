@@ -174,6 +174,11 @@ screenshot:
 testExecution:
   parallel: true     # enable/disable parallel execution
   threadCount: 3     # number of parallel threads to use
+
+retry:
+  enabled: true      # enable/disable test retries
+  maxRetries: 2      # maximum number of retry attempts
+  delayBetweenRetries: 1000  # delay in milliseconds between retries
 ```
 
 ### Configuration Management
@@ -183,6 +188,7 @@ The framework uses a configuration management system that:
 - Supports environment-specific configurations
 - Allows runtime overrides via system properties
 - Uses TestNG listeners for dynamic configuration
+- Provides automatic test retry capabilities
 
 Common configuration overrides:
 ```bash
@@ -193,8 +199,37 @@ mvn test -Dbrowser.type=firefox -Dbrowser.headless=true
 mvn test -DtestExecution.parallel=false
 mvn test -DtestExecution.threadCount=4
 
+# Override retry settings
+mvn test -Dretry.enabled=true
+mvn test -Dretry.maxRetries=3
+mvn test -Dretry.delayBetweenRetries=2000
+
 # Override environment
 mvn test -Denvironment=qa
+```
+
+### Test Retry Configuration
+
+The framework includes automatic test retry capabilities for handling flaky tests or temporary environment issues:
+
+#### Retry Features:
+- Configurable retry attempts for failed tests
+- Optional delay between retry attempts
+- Automatic retry analyzer applied to all test methods
+- Detailed retry logging and reporting
+- Environment-specific retry configuration
+
+Configure retry behavior through YAML:
+```yaml
+retry:
+  enabled: true      # Enable/disable retry mechanism
+  maxRetries: 2      # Maximum retry attempts (0-N)
+  delayBetweenRetries: 1000  # Milliseconds to wait between retries
+```
+
+Or override at runtime:
+```bash
+mvn test -Dretry.enabled=true -Dretry.maxRetries=3
 ```
 
 ### Parallel Execution

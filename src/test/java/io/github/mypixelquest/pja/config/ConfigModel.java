@@ -11,6 +11,7 @@ public class ConfigModel {
     private BrowserConfig browser;
     private ScreenshotConfig screenshot;
     private TestExecutionConfig testExecution;
+    private RetryConfig retry;
     
     @Data
     public static class EnvironmentConfig {
@@ -36,5 +37,12 @@ public class ConfigModel {
     public static class TestExecutionConfig {
         private boolean parallel;
         private int threadCount;
+    }
+
+    @Data
+    public static class RetryConfig {
+        private boolean enabled;
+        private int maxRetries;
+        private long delayBetweenRetries; // in milliseconds
     }
 }
