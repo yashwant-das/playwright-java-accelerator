@@ -1,0 +1,22 @@
+environment:
+  name: dev
+  baseUrl: https://playwright.dev/
+
+browser:
+  type: chromium
+  headless: false  # Different from QA for local development
+  slowMo: 100      # Slower execution for local debugging
+  timeout: 30000
+
+screenshot:
+  takeOnFailure: true
+  fullPage: true
+
+testExecution:
+  parallel: false  # Sequential execution for easier debugging
+  threadCount: 1
+
+retry:
+  enabled: false   # No retries in dev for faster feedback
+  maxRetries: 0
+  delayBetweenRetries: 0

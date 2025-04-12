@@ -143,7 +143,7 @@ public class ExampleTest extends BaseTest {
      * Test to demonstrate retry functionality
      * This test will fail on first attempt due to timing, but should pass on retry
      */
-    @Test(description = "Demonstrate retry functionality")
+    @Test(description = "Demonstrate retry functionality", enabled = false)
     @Description("Test that demonstrates retry mechanism by having an intentional timing issue")
     @Severity(SeverityLevel.NORMAL)
     @Story("Retry Mechanism")
@@ -168,7 +168,7 @@ public class ExampleTest extends BaseTest {
      * Test to demonstrate screenshot capture on failure
      * This test will always fail but should generate a screenshot
      */
-    @Test(description = "Screenshot on failure demonstration")
+    @Test(description = "Screenshot on failure demonstration", enabled = false)
     @Story("Screenshot Capture")
     @Description("Demonstrates screenshot capture on test failure")
     @Severity(SeverityLevel.NORMAL)

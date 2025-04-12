@@ -53,6 +53,7 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Logging: SLF4J API + Logback implementation -->
