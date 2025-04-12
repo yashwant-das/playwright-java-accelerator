@@ -1,0 +1,44 @@
+{
+  "orders": [
+    {
+      "id": "ORD-001",
+      "customer": {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone": "+1234567890",
+        "address": "123 Main St, Anytown, USA 12345"
+      },
+      "items": [
+        {
+          "productId": "PROD-001",
+          "name": "Premium Laptop",
+          "quantity": 1,
+          "price": 1299.99
+        }
+      ],
+      "total": 1299.99,
+      "status": "PENDING",
+      "createdAt": "2024-04-13T10:00:00Z"
+    },
+    {
+      "id": "ORD-002",
+      "customer": {
+        "name": "Jane Smith",
+        "email": "jane@example.com",
+        "phone": "+1987654321",
+        "address": "456 Oak Ave, Somewhere, USA 54321"
+      },
+      "items": [
+        {
+          "productId": "PROD-002",
+          "name": "Smart Phone",
+          "quantity": 2,
+          "price": 699.99
+        }
+      ],
+      "total": 1399.98,
+      "status": "COMPLETED",
+      "createdAt": "2024-04-12T15:30:00Z"
+    }
+  ]
+} 

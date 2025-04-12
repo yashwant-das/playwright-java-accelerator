@@ -1,0 +1,11 @@
+id,name,price,category,stock,rating
+PROD-001,Premium Laptop,1299.99,Electronics,50,4.8
+PROD-002,Smart Phone,699.99,Electronics,100,4.6
+PROD-003,Wireless Headphones,199.99,Accessories,75,4.5
+PROD-004,Smart Watch,299.99,Electronics,30,4.7
+PROD-005,Tablet,499.99,Electronics,40,4.4
+PROD-006,Bluetooth Speaker,149.99,Accessories,60,4.3
+PROD-007,Gaming Mouse,79.99,Accessories,90,4.6
+PROD-008,External SSD,199.99,Accessories,45,4.7
+PROD-009,Webcam,129.99,Accessories,55,4.4
+PROD-010,Mechanical Keyboard,149.99,Accessories,70,4.5 

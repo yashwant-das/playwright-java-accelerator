@@ -16,6 +16,7 @@ A robust, maintainable, and modern test automation framework using Java 17 and P
 - **Streamlined Assertions**: AssertJ for fluent, powerful assertions
 - **Clean Code**: Optional use of Lombok to reduce boilerplate code
 - **CI/CD Integration**: GitHub Actions workflow for automated testing and reporting
+- **Flexible Test Data Management**: Support for multiple data sources and formats
 
 ## Dependencies
 
@@ -310,6 +311,177 @@ To modify parallel execution settings:
      parallel: true
      threadCount: 3
     ```
+
+## Test Data Management
+
+The framework provides comprehensive test data management capabilities through multiple approaches:
+
+### 1. YAML Configuration Files
+
+Store test data in YAML files for easy maintenance and environment-specific configurations:
+
+```yaml
+# src/test/resources/data/test-data.yaml
+users:
+  admin:
+    username: admin@example.com
+    password: admin123
+    role: ADMIN
+  regular:
+    username: user@example.com
+    password: user123
+    role: USER
+
+products:
+  laptop:
+    name: "Premium Laptop"
+    price: 1299.99
+    category: "Electronics"
+  phone:
+    name: "Smart Phone"
+    price: 699.99
+    category: "Electronics"
+```
+
+### 2. JSON Data Files
+
+Support for JSON data files for complex data structures:
+
+```json
+// src/test/resources/data/orders.json
+{
+  "orders": [
+    {
+      "id": "ORD-001",
+      "customer": {
+        "name": "John Doe",
+        "email": "john@example.com"
+      },
+      "items": [
+        {
+          "productId": "PROD-001",
+          "quantity": 2
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 3. CSV Data Files
+
+Support for CSV files for tabular data:
+
+```csv
+# src/test/resources/data/products.csv
+id,name,price,category
+PROD-001,Premium Laptop,1299.99,Electronics
+PROD-002,Smart Phone,699.99,Electronics
+PROD-003,Wireless Headphones,199.99,Accessories
+```
+
+### 4. Data Provider Methods
+
+TestNG data providers for dynamic test data:
+
+```java
+@DataProvider(name = "userCredentials")
+public Object[][] getUserCredentials() {
+    return new Object[][] {
+        {"admin@example.com", "admin123", "ADMIN"},
+        {"user@example.com", "user123", "USER"}
+    };
+}
+
+@Test(dataProvider = "userCredentials")
+public void testLogin(String username, String password, String role) {
+    // Test implementation
+}
+```
+
+### 5. Environment-Specific Data
+
+Support for environment-specific test data:
+
+```yaml
+# src/test/resources/data/qa/test-data.yaml
+environment: qa
+users:
+  admin:
+    username: qa-admin@example.com
+    password: qa-admin123
+
+# src/test/resources/data/prod/test-data.yaml
+environment: prod
+users:
+  admin:
+    username: prod-admin@example.com
+    password: prod-admin123
+```
+
+### 6. Dynamic Data Generation
+
+Support for generating test data dynamically:
+
+```java
+public class TestDataGenerator {
+    public static User generateUser() {
+        return User.builder()
+            .username("user" + System.currentTimeMillis() + "@example.com")
+            .password(generateRandomPassword())
+            .role("USER")
+            .build();
+    }
+}
+```
+
+### 7. Data Validation
+
+Built-in data validation capabilities:
+
+```java
+@Test
+public void testDataValidation() {
+    User user = TestDataGenerator.generateUser();
+    
+    assertThat(user)
+        .hasValidEmail()
+        .hasValidPassword()
+        .hasValidRole();
+}
+```
+
+### 8. Data Cleanup
+
+Automatic cleanup of test data:
+
+```java
+@AfterMethod
+public void cleanupTestData() {
+    // Cleanup implementation
+}
+```
+
+### Example Usage
+
+```java
+public class UserTest extends BaseTest {
+    private final TestDataManager dataManager;
+    
+    public UserTest() {
+        this.dataManager = new TestDataManager("test-data.yaml");
+    }
+    
+    @Test
+    public void testUserLogin() {
+        User user = dataManager.getUser("admin");
+        LoginPage loginPage = new LoginPage(getCurrentPage().get());
+        
+        loginPage.login(user.getUsername(), user.getPassword());
+        assertThat(loginPage.isLoggedIn()).isTrue();
+    }
+}
+```
 
 ## Included Test Examples
 

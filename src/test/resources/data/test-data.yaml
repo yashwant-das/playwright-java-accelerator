@@ -1,0 +1,44 @@
+users:
+  admin:
+    username: admin@example.com
+    password: admin123
+    role: ADMIN
+    permissions:
+      - read
+      - write
+      - delete
+  regular:
+    username: user@example.com
+    password: user123
+    role: USER
+    permissions:
+      - read
+
+products:
+  laptop:
+    name: "Premium Laptop"
+    price: 1299.99
+    category: "Electronics"
+    specs:
+      processor: "Intel i7"
+      memory: "16GB"
+      storage: "512GB SSD"
+  phone:
+    name: "Smart Phone"
+    price: 699.99
+    category: "Electronics"
+    specs:
+      processor: "Snapdragon 888"
+      memory: "8GB"
+      storage: "256GB"
+
+orders:
+  template:
+    status: "PENDING"
+    items: []
+    shipping:
+      method: "STANDARD"
+      address: ""
+    payment:
+      method: "CREDIT_CARD"
+      status: "PENDING" 
