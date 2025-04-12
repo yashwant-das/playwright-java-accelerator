@@ -3,70 +3,80 @@ package io.github.mypixelquest.pja.listeners;
 import com.microsoft.playwright.Page;
 import io.github.mypixelquest.pja.base.BaseTest;
 import io.qameta.allure.Allure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 import java.io.ByteArrayInputStream;
-import java.util.Optional;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-/**
- * TestNG listener that captures screenshots on test failures
- * and attaches them to the Allure report
- */
+@Slf4j
 public class ScreenshotListener implements ITestListener {
-    private static final Logger log = LoggerFactory.getLogger(ScreenshotListener.class);
+
+    @Override
+    public void onTestStart(ITestResult result) {
+        // No action needed
+    }
 
     @Override
     public void onTestFailure(ITestResult result) {
         log.debug("Test failed: {}", result.getName());
-        captureAndAttachScreenshot(result);
+        takeScreenshot(result);
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        log.debug("Test skipped: {}", result.getName());
-        captureAndAttachScreenshot(result);
+        log.debug("Test skipped: {}", result.getMethod().getMethodName());
     }
 
-    /**
-     * Capture screenshot and attach to Allure report
-     *
-     * @param result TestNG ITestResult object
-     */
-    private void captureAndAttachScreenshot(ITestResult result) {
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        // No action needed
+    }
+
+    private void takeScreenshot(ITestResult result) {
         try {
-            // Get the test instance (should be a BaseTest)
-            Object testInstance = result.getInstance();
-            if (!(testInstance instanceof BaseTest)) {
+            Object instance = result.getInstance();
+            if (!(instance instanceof BaseTest)) {
                 log.warn("Test instance is not a BaseTest, cannot take screenshot");
                 return;
             }
 
-            // Get current thread's Page object from BaseTest
-            BaseTest baseTest = (BaseTest) testInstance;
-            Optional<Page> pageOptional = baseTest.getCurrentPage();
-
-            if (pageOptional.isPresent()) {
-                Page page = pageOptional.get();
-                log.info("Taking screenshot for failed test: {}", result.getName());
-
-                // Take screenshot with Playwright
-                byte[] screenshotBytes = page.screenshot(
-                        new Page.ScreenshotOptions().setFullPage(true));
-
-                // Attach screenshot to Allure report
-                Allure.addAttachment(
-                        "Screenshot on Failure - " + result.getName(),
-                        "image/png",
-                        new ByteArrayInputStream(screenshotBytes),
-                        "png");
-            } else {
-                log.warn("No active Page object found, cannot take screenshot");
-            }
+            BaseTest test = (BaseTest) instance;
+            test.getCurrentPage().ifPresentOrElse(
+                page -> captureAndAttachScreenshot(page, result),
+                () -> log.warn("No active page found to capture screenshot")
+            );
         } catch (Exception e) {
-            log.error("Failed to capture screenshot", e);
+            log.error("Failed to take screenshot", e);
+        }
+    }
+
+    private void captureAndAttachScreenshot(Page page, ITestResult result) {
+        try {
+            String testName = result.getName();
+            log.info("Taking screenshot for test: {}", testName);
+            
+            // Ensure screenshots directory exists
+            Path screenshotsDir = Paths.get("target/screenshots");
+            Files.createDirectories(screenshotsDir);
+            
+            // Take screenshot
+            byte[] screenshot = page.screenshot(new Page.ScreenshotOptions()
+                .setPath(screenshotsDir.resolve(testName + "_" + System.currentTimeMillis() + ".png"))
+                .setFullPage(true));
+
+            // Attach to Allure report
+            Allure.addAttachment(
+                testName + "_failure",
+                "image/png",
+                new ByteArrayInputStream(screenshot),
+                "png"
+            );
+        } catch (Exception e) {
+            log.error("Failed to capture or attach screenshot for test: {}", result.getName(), e);
         }
     }
 }

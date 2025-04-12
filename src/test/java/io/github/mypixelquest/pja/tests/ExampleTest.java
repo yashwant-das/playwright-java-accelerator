@@ -2,22 +2,20 @@ package io.github.mypixelquest.pja.tests;
 
 import io.github.mypixelquest.pja.base.BaseTest;
 import io.github.mypixelquest.pja.pages.ExamplePage;
-import io.qameta.allure.Description;
-import io.qameta.allure.Epic;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Severity;
-import io.qameta.allure.SeverityLevel;
-import io.qameta.allure.Story;
-import org.assertj.core.api.Assertions;
+import io.qameta.allure.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test class for Playwright.dev website using ExamplePage
  */
-@Epic("Playwright Website Tests")
-@Feature("Basic Website Navigation")
+@Epic("Playwright Java Accelerator")
+@Feature("Example Tests")
 public class ExampleTest extends BaseTest {
     private static final Logger log = LoggerFactory.getLogger(ExampleTest.class);
 
@@ -38,7 +36,7 @@ public class ExampleTest extends BaseTest {
             examplePage.navigate();
             
             // Verify page loaded successfully
-            Assertions.assertThat(examplePage.isLoaded())
+            assertThat(examplePage.isLoaded())
                     .as("Homepage should be loaded")
                     .isTrue();
             
@@ -46,7 +44,7 @@ public class ExampleTest extends BaseTest {
             examplePage.clickGetStarted();
             
             // Verify URL contains docs/intro
-            Assertions.assertThat(examplePage.getCurrentUrl())
+            assertThat(examplePage.getCurrentUrl())
                     .as("URL should contain docs/intro after clicking Get Started")
                     .contains("docs/intro");
         });
@@ -72,7 +70,7 @@ public class ExampleTest extends BaseTest {
             examplePage.navigateToLanguage("java");
             
             // Verify URL contains java
-            Assertions.assertThat(examplePage.getCurrentUrl())
+            assertThat(examplePage.getCurrentUrl())
                     .as("URL should contain java")
                     .contains("/java");
         });
@@ -98,7 +96,7 @@ public class ExampleTest extends BaseTest {
             examplePage.openSearch();
             
             // Verify search dialog is visible using the page object method
-            Assertions.assertThat(examplePage.isSearchModalVisible())
+            assertThat(examplePage.isSearchModalVisible())
                     .as("Search modal should be visible")
                     .isTrue();
         });
@@ -124,7 +122,7 @@ public class ExampleTest extends BaseTest {
             examplePage.navigateToTool("codegen");
             
             // Verify URL contains codegen
-            Assertions.assertThat(examplePage.getCurrentUrl())
+            assertThat(examplePage.getCurrentUrl())
                     .as("URL should contain codegen")
                     .contains("codegen");
             
@@ -135,9 +133,66 @@ public class ExampleTest extends BaseTest {
             examplePage.navigateToTool("trace-viewer");
             
             // Verify URL contains trace-viewer
-            Assertions.assertThat(examplePage.getCurrentUrl())
+            assertThat(examplePage.getCurrentUrl())
                     .as("URL should contain trace-viewer")
                     .contains("trace-viewer");
         });
+    }
+
+    /**
+     * Test to demonstrate retry functionality
+     * This test will fail on first attempt due to timing, but should pass on retry
+     */
+    @Test(description = "Demonstrate retry functionality")
+    @Description("Test that demonstrates retry mechanism by having an intentional timing issue")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Retry Mechanism")
+    public void testRetryFunctionality() {
+        log.info("Running test: Retry functionality demonstration");
+        
+        getCurrentPage().ifPresent(page -> {
+            ExamplePage examplePage = new ExamplePage(page);
+            examplePage.navigate();
+            
+            // Click search without waiting for animation
+            examplePage.openSearch();
+            
+            // Try to verify search dialog immediately (likely to fail first time)
+            assertThat(examplePage.isSearchModalVisible())
+                    .as("Search modal should be visible immediately")
+                    .isTrue();
+        });
+    }
+
+    /**
+     * Test to demonstrate screenshot capture on failure
+     * This test will always fail but should generate a screenshot
+     */
+    @Test(description = "Screenshot on failure demonstration")
+    @Story("Screenshot Capture")
+    @Description("Demonstrates screenshot capture on test failure")
+    @Severity(SeverityLevel.NORMAL)
+    public void testScreenshotOnFailure() {
+        log.info("Running test: Screenshot on failure demonstration");
+        getCurrentPage().ifPresent(page -> {
+            page.navigate("https://playwright.dev");
+            assertThat(page.url())
+                .as("URL should contain an impossible value")
+                .contains("this-will-never-exist");
+        });
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void afterMethod(ITestResult result) {
+        if (!result.isSuccess()) {
+            getCurrentPage().ifPresent(page -> {
+                captureScreenshot(page.screenshot());
+            });
+        }
+    }
+
+    @Attachment(value = "Page Screenshot", type = "image/png")
+    private byte[] captureScreenshot(byte[] screenshot) {
+        return screenshot;
     }
 }
