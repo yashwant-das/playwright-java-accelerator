@@ -88,10 +88,18 @@ public class ConfigReader {
     
     /**
      * Check if browser should run in headless mode
+     * First checks if headless property is specified on command line,
+     * then falls back to configuration file
      * 
      * @return True if headless, false otherwise
      */
     public boolean isHeadless() {
+        String headlessProperty = System.getProperty("headless");
+        if (headlessProperty != null) {
+            boolean headless = Boolean.parseBoolean(headlessProperty);
+            log.info("Using command line headless mode: {}", headless);
+            return headless;
+        }
         return config.getBrowser().isHeadless();
     }
     

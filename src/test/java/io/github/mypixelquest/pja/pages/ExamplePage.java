@@ -8,8 +8,8 @@ import io.qameta.allure.Step;
  * Page Object for the Appium Documentation Home Page
  */
 public class ExamplePage extends BasePage {
-    // URL for the Appium documentation
-    private static final String APPIUM_DOCS_URL = "https://appium.io/docs/en/latest/";
+    // URL for the Appium documentation - updated to the latest version
+    private static final String APPIUM_DOCS_URL = "https://appium.io/docs/en/2.17/";
     
     // Locators
     private final Locator searchButton;
@@ -25,11 +25,12 @@ public class ExamplePage extends BasePage {
      */
     public ExamplePage(Page page) {
         super(page);
-        this.searchButton = page.locator("button[class*='md-search__icon']").first();
-        this.searchInput = page.locator("input[placeholder='Search']");
+        // Updated locators based on current website structure
+        this.searchButton = page.locator("label.md-header__button[for='__search']");
+        this.searchInput = page.locator("input.md-search__input");
         this.navigationLinks = page.locator("nav.md-nav--primary a.md-nav__link");
-        this.quickstartLink = page.locator("a:has-text('Quickstart')");
-        this.darkModeButton = page.locator("button[data-md-color-scheme]");
+        this.quickstartLink = page.locator("a[href^='/docs/en/2.17/quickstart/']");
+        this.darkModeButton = page.locator("form[data-md-component='palette'] input[name='__palette']").first();
     }
     
     /**
@@ -42,6 +43,10 @@ public class ExamplePage extends BasePage {
         log.info("Navigating to Appium documentation: {}", APPIUM_DOCS_URL);
         page.navigate(APPIUM_DOCS_URL);
         page.waitForLoadState();
+        
+        // Try to accept any cookie consent dialog
+        acceptCookieConsentIfPresent();
+        
         return this;
     }
     
@@ -54,10 +59,18 @@ public class ExamplePage extends BasePage {
     @Step("Search for: {searchTerm}")
     public ExamplePage search(String searchTerm) {
         log.info("Searching for: {}", searchTerm);
+        
+        // Try to accept any cookie consent dialog before interacting
+        acceptCookieConsentIfPresent();
+        
         searchButton.click();
         searchInput.fill(searchTerm);
         searchInput.press("Enter");
         page.waitForLoadState();
+        
+        // Try again after search results load
+        acceptCookieConsentIfPresent();
+        
         return this;
     }
     
@@ -70,8 +83,17 @@ public class ExamplePage extends BasePage {
     @Step("Navigate to section: {sectionName}")
     public ExamplePage navigateToSection(String sectionName) {
         log.info("Navigating to section: {}", sectionName);
-        page.locator("a:has-text('" + sectionName + "')").first().click();
+        
+        // Try to accept any cookie consent dialog before clicking
+        acceptCookieConsentIfPresent();
+        
+        // Updated to match the current navigation structure
+        page.locator("nav.md-tabs__list a.md-tabs__link:has-text('" + sectionName + "')").first().click();
         page.waitForLoadState();
+        
+        // Try again after the page loads in case a new dialog appears
+        acceptCookieConsentIfPresent();
+        
         return this;
     }
     
@@ -83,7 +105,8 @@ public class ExamplePage extends BasePage {
     @Step("Toggle dark/light mode")
     public ExamplePage toggleDarkMode() {
         log.info("Toggling dark/light mode");
-        darkModeButton.click();
+        // Click on the dark mode label instead of the input directly
+        page.locator("form[data-md-component='palette'] label.md-header__button").first().click();
         return this;
     }
     
@@ -94,7 +117,8 @@ public class ExamplePage extends BasePage {
      */
     @Step("Get documentation page title")
     public String getDocumentationTitle() {
-        String title = page.locator("article h1").textContent();
+        // Updated to match the current page structure
+        String title = page.locator("div.md-content__inner h1").first().textContent();
         log.info("Documentation title: {}", title);
         return title;
     }
@@ -106,7 +130,8 @@ public class ExamplePage extends BasePage {
      */
     @Step("Count search results")
     public int getSearchResultCount() {
-        return page.locator("article ul.md-search-result__list li").count();
+        // Updated to match the current search results structure
+        return page.locator("ol.md-search-result__list li").count();
     }
     
     /**
