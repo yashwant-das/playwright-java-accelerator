@@ -15,6 +15,20 @@ A robust, maintainable, and modern test automation framework using Java 17 and P
 - **Configuration Management**: YAML-based configuration with environment-specific profiles
 - **Streamlined Assertions**: AssertJ for fluent, powerful assertions
 - **Clean Code**: Optional use of Lombok to reduce boilerplate code
+- **CI/CD Integration**: GitHub Actions workflow for automated testing and reporting
+
+## Dependencies
+
+- Java 17
+- Maven 3.6+
+- Playwright 1.42.0
+- TestNG 7.9.0
+- Allure 2.25.0
+- SLF4J 2.0.11
+- Logback 1.4.14
+- AssertJ 3.25.1
+- Jackson 2.16.1
+- Lombok 1.18.30
 
 ## Project Structure
 
@@ -114,6 +128,37 @@ Generate and open Allure report:
 mvn allure:report
 mvn allure:serve
 ```
+
+## Continuous Integration/Deployment
+
+The project includes a GitHub Actions workflow that:
+- Runs tests automatically on push to main/master and pull requests
+- Generates and deploys Allure reports to GitHub Pages
+- Uploads test screenshots on failure
+- Uses macOS runners for test execution
+- Caches Maven dependencies for faster builds
+
+### GitHub Actions Configuration
+
+The project uses GitHub Actions for CI/CD with the following features:
+- Automatic test execution on code changes
+- Allure report generation and deployment
+- Screenshot capture on test failures
+- Maven dependency caching
+- Java 17 setup
+- Browser installation automation
+
+To configure GitHub Actions:
+1. Set up the `GH_PAGES_TOKEN` secret in your repository settings
+2. The workflow will automatically deploy reports to the gh-pages branch
+
+## Parallel Execution
+
+The framework supports parallel test execution through:
+- TestNG parallel execution configuration
+- GitHub Actions parallel job execution
+- Configurable thread count
+- Environment-specific parallel settings
 
 ### Logging Configuration
 
@@ -248,12 +293,7 @@ To modify parallel execution settings:
    testExecution:
      parallel: true
      threadCount: 3
-   ```
-
-2. Via command line:
-   ```bash
-   mvn test -DtestExecution.parallel=true -DtestExecution.threadCount=4
-   ```
+```
 
 ## Included Test Examples
 
