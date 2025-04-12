@@ -99,11 +99,11 @@ jobs:
           name: allure-report
           path: target/site
 
-      - name: Deploy to main branch
+      - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: target/site
-          publish_branch: main
-          force_orphan: false
-          keep_files: true
+          publish_branch: gh-pages
+          force_orphan: true
+          keep_files: false
