@@ -22,6 +22,11 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
+    - name: Clean Allure Results
+      run: |
+        rm -rf allure-results/*
+        rm -rf target/allure-results/*
+
     - name: Install Playwright browsers
       run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
 
