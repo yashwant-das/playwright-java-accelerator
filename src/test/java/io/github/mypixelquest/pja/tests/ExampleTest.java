@@ -14,113 +14,131 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 /**
- * Test class for Appium Documentation website using ExamplePage
+ * Test class for Playwright.dev website using ExamplePage
  */
-@Epic("Documentation Tests")
-@Feature("Appium Documentation")
+@Epic("Playwright Website Tests")
+@Feature("Basic Website Navigation")
 public class ExampleTest extends BaseTest {
     private static final Logger log = LoggerFactory.getLogger(ExampleTest.class);
 
     /**
-     * Test that verifies navigation to the Quickstart section
+     * Test 1: Verify basic navigation to the homepage and Get Started functionality
      */
-    @Test(description = "Navigate to Quickstart section")
-    @Description("This test navigates to the Quickstart section and verifies the title")
-    @Severity(SeverityLevel.NORMAL)
-    @Story("Documentation Navigation")
-    public void navigateToQuickstartSection() {
-        log.info("Running test: Navigate to Quickstart section");
+    @Test(description = "Verify homepage navigation and Get Started button")
+    @Description("Navigates to the homepage and clicks the Get Started button")
+    @Severity(SeverityLevel.BLOCKER)
+    @Story("Homepage Navigation")
+    public void testHomePageNavigation() {
+        log.info("Running test: Homepage navigation");
         
         getCurrentPage().ifPresent(page -> {
-            // Create example page and navigate to Appium docs
             ExamplePage examplePage = new ExamplePage(page);
-            examplePage.navigate()
-                       .acceptCookies(); // Explicitly accept cookies
             
-            // Verify page loaded correctly
+            // Navigate to homepage
+            examplePage.navigate();
+            
+            // Verify page loaded successfully
             Assertions.assertThat(examplePage.isLoaded())
-                    .as("Appium documentation page should be loaded")
+                    .as("Homepage should be loaded")
                     .isTrue();
             
-            // Navigate to Quickstart section
-            examplePage.navigateToSection("Quickstart");
+            // Click Get Started button
+            examplePage.clickGetStarted();
             
-            // Get the documentation title and verify it
-            String sectionTitle = examplePage.getDocumentationTitle();
-            log.info("Section title: {}", sectionTitle);
-            
-            // Verify the section title contains "Quickstart"
-            Assertions.assertThat(sectionTitle)
-                    .as("Section title should contain 'Quickstart'")
-                    .containsIgnoringCase("quickstart");
+            // Verify URL contains docs/intro
+            Assertions.assertThat(examplePage.getCurrentUrl())
+                    .as("URL should contain docs/intro after clicking Get Started")
+                    .contains("docs/intro");
         });
     }
 
     /**
-     * Test that searches for specific documentation content
+     * Test 2: Verify Java documentation navigation
      */
-    @Test(description = "Search Appium documentation")
-    @Description("This test performs a search in the Appium docs and verifies results are returned")
+    @Test(description = "Navigate to Java documentation")
+    @Description("Navigates to Java-specific documentation and verifies the URL")
     @Severity(SeverityLevel.CRITICAL)
-    @Story("Documentation Search")
-    public void searchAppiumDocumentation() {
-        log.info("Running test: Search Appium documentation");
+    @Story("Language Documentation")
+    public void testJavaDocumentation() {
+        log.info("Running test: Java documentation navigation");
         
         getCurrentPage().ifPresent(page -> {
-            // Create example page and navigate to Appium docs
             ExamplePage examplePage = new ExamplePage(page);
-            examplePage.navigate()
-                       .acceptCookies(); // Explicitly accept cookies
             
-            // Perform search for "uiautomator" to match the sample code
-            examplePage.search("uiautomator");
+            // Navigate to homepage
+            examplePage.navigate();
             
-            // Get search result count
-            int resultCount = examplePage.getSearchResultCount();
-            log.info("Search result count: {}", resultCount);
+            // Navigate to Java documentation
+            examplePage.navigateToLanguage("java");
             
-            // Verify we have search results
-            Assertions.assertThat(resultCount)
-                    .as("Search should return at least one result")
-                    .isGreaterThan(0);
-            
-            // Verify current URL contains search term
-            String currentUrl = examplePage.getCurrentUrl();
-            log.info("Current URL after search: {}", currentUrl);
-            
-            Assertions.assertThat(currentUrl)
-                    .as("URL should indicate search was performed")
-                    .contains("search");
+            // Verify URL contains java
+            Assertions.assertThat(examplePage.getCurrentUrl())
+                    .as("URL should contain java")
+                    .contains("/java");
         });
     }
-    
+
     /**
-     * Test that verifies theme switching functionality
+     * Test 3: Verify search functionality
      */
-    @Test(description = "Test theme switching")
-    @Description("This test verifies the theme switching functionality")
-    @Severity(SeverityLevel.MINOR)
-    @Story("UI Customization")
-    public void testThemeSwitching() {
-        log.info("Running test: Test theme switching");
+    @Test(description = "Verify search functionality")
+    @Description("Opens search dialog and verifies it's visible")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Search Functionality")
+    public void testSearch() {
+        log.info("Running test: Search functionality");
         
         getCurrentPage().ifPresent(page -> {
-            // Create example page and navigate to Appium docs
             ExamplePage examplePage = new ExamplePage(page);
-            examplePage.navigate()
-                       .acceptCookies(); // Explicitly accept cookies
             
-            // Switch to light mode
-            examplePage.switchToLightMode();
-            log.info("Switched to light mode successfully");
+            // Navigate to homepage
+            examplePage.navigate();
             
-            // Switch to dark mode
-            examplePage.switchToDarkMode();
-            log.info("Switched to dark mode successfully");
+            // Open search dialog
+            examplePage.openSearch();
             
-            // Switch to system preference
-            examplePage.switchToSystemPreference();
-            log.info("Switched to system preference successfully");
+            // Verify search dialog is visible (using page reference directly for this check)
+            boolean isSearchVisible = page.locator("div.DocSearch-Modal").isVisible();
+            Assertions.assertThat(isSearchVisible)
+                    .as("Search modal should be visible")
+                    .isTrue();
+        });
+    }
+
+    /**
+     * Test 4: Verify Playwright tools navigation
+     */
+    @Test(description = "Navigate to Playwright tools")
+    @Description("Navigates to various Playwright tools (Codegen, Inspector, Trace Viewer)")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Tools Navigation")
+    public void testToolsNavigation() {
+        log.info("Running test: Tools navigation");
+        
+        getCurrentPage().ifPresent(page -> {
+            ExamplePage examplePage = new ExamplePage(page);
+            
+            // Navigate to homepage
+            examplePage.navigate();
+            
+            // Navigate to Codegen tool
+            examplePage.navigateToTool("codegen");
+            
+            // Verify URL contains codegen
+            Assertions.assertThat(examplePage.getCurrentUrl())
+                    .as("URL should contain codegen")
+                    .contains("codegen");
+            
+            // Navigate back to homepage
+            examplePage.navigate();
+            
+            // Navigate to Trace Viewer
+            examplePage.navigateToTool("trace-viewer");
+            
+            // Verify URL contains trace-viewer
+            Assertions.assertThat(examplePage.getCurrentUrl())
+                    .as("URL should contain trace-viewer")
+                    .contains("trace-viewer");
         });
     }
 }

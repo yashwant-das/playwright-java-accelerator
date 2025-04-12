@@ -6,7 +6,7 @@
     </listeners>
     
     <parameter name="browser" value="chromium" />
-    <parameter name="headless" value="true" />
+    <parameter name="headless" value="false" />
     <parameter name="environment" value="qa" />
     
     <test name="Regression Tests">

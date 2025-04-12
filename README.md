@@ -121,7 +121,7 @@ Example configuration (qa.yaml):
 ```yaml
 environment:
   name: qa
-  baseUrl: https://appium.io/docs/en/latest/
+  baseUrl: https://playwright.dev/
 
 browser:
   type: chromium  # chromium, firefox, or webkit
@@ -136,15 +136,25 @@ screenshot:
 
 ## Included Test Examples
 
-The framework includes a comprehensive example test:
+The framework includes examples demonstrating how to test the Playwright.dev website:
 
-### Example Website Tests
+### Playwright Website Tests
 
-The `ExampleTest` class demonstrates how to interact with the Appium documentation website:
-- Navigation to specific sections of the documentation
-- Searching for content using the search functionality
-- Testing the dark mode toggle functionality
-- Verifying documentation titles and search results
+The `ExampleTest` class demonstrates various interactions with the Playwright documentation website:
+
+- **Homepage Navigation Test**: Verifies basic navigation and "Get Started" functionality
+- **Java Documentation Test**: Tests navigation to Java-specific documentation
+- **Search Functionality Test**: Validates the search feature and modal dialog
+- **Tools Navigation Test**: Tests navigation between different Playwright tools (Codegen, Trace Viewer)
+
+These tests showcase:
+- Page Object Model implementation
+- Playwright's auto-waiting capabilities
+- Handling different types of UI elements
+- Navigation between different sections
+- Modal dialog interaction
+- URL verification
+- Element visibility checks
 
 Run these tests with:
 ```bash
@@ -162,107 +172,34 @@ mvn test -DsuiteXmlFile=src/test/resources/suites/example-suite.xml
 
 ```java
 public class ExamplePage extends BasePage {
-    // URL for the page
-    private static final String EXAMPLE_URL = "https://appium.io/docs/en/latest/";
-    
-    // Locators
+    // Example implementation showing Playwright locators and methods
+    private final Locator getStartedButton;
     private final Locator searchButton;
-    private final Locator searchInput;
-    private final Locator navigationLinks;
-    private final Locator quickstartLink;
-    private final Locator darkModeButton;
+    private final Locator javaLink;
     
-    /**
-     * Constructor for ExamplePage
-     *
-     * @param page Playwright Page object
-     */
     public ExamplePage(Page page) {
         super(page);
-        this.searchButton = page.locator("button[class*='md-search__icon']").first();
-        this.searchInput = page.locator("input[placeholder='Search']");
-        this.navigationLinks = page.locator("nav.md-nav--primary a.md-nav__link");
-        this.quickstartLink = page.locator("a:has-text('Quickstart')");
-        this.darkModeButton = page.locator("button[data-md-color-scheme]");
+        this.getStartedButton = page.locator("a.getStarted_Sjon");
+        this.searchButton = page.locator("button.DocSearch");
+        this.javaLink = page.locator("a[href='/java/']");
     }
     
-    /**
-     * Navigate to the example page
-     * 
-     * @return ExamplePage instance for method chaining
-     */
-    @Step("Navigate to example page")
+    @Step("Navigate to homepage")
     public ExamplePage navigate() {
-        log.info("Navigating to example page: {}", EXAMPLE_URL);
-        page.navigate(EXAMPLE_URL);
-        page.waitForLoadState();
+        page.navigate("https://playwright.dev");
         return this;
     }
     
-    /**
-     * Search for a given term
-     *
-     * @param searchTerm The term to search for
-     * @return ExamplePage instance for method chaining
-     */
-    @Step("Search for: {searchTerm}")
-    public ExamplePage search(String searchTerm) {
-        log.info("Searching for: {}", searchTerm);
+    @Step("Click Get Started button")
+    public ExamplePage clickGetStarted() {
+        getStartedButton.click();
+        return this;
+    }
+    
+    @Step("Open search dialog")
+    public ExamplePage openSearch() {
         searchButton.click();
-        searchInput.fill(searchTerm);
-        searchInput.press("Enter");
-        page.waitForLoadState();
         return this;
-    }
-    
-    /**
-     * Navigate to specific section in documentation
-     *
-     * @param sectionName The name of the section to navigate to
-     * @return ExamplePage instance for method chaining
-     */
-    @Step("Navigate to section: {sectionName}")
-    public ExamplePage navigateToSection(String sectionName) {
-        log.info("Navigating to section: {}", sectionName);
-        page.locator("a:has-text('" + sectionName + "')").first().click();
-        page.waitForLoadState();
-        return this;
-    }
-    
-    /**
-     * Toggle between dark and light mode
-     * 
-     * @return ExamplePage instance for method chaining
-     */
-    @Step("Toggle dark/light mode")
-    public ExamplePage toggleDarkMode() {
-        log.info("Toggling dark/light mode");
-        darkModeButton.click();
-        return this;
-    }
-    
-    /**
-     * Get the current documentation page title
-     *
-     * @return The title of the current page
-     */
-    @Step("Get documentation page title")
-    public String getDocumentationTitle() {
-        String title = page.locator("article h1").textContent();
-        log.info("Documentation title: {}", title);
-        return title;
-    }
-    
-    /**
-     * Check if the page is loaded
-     *
-     * @return true if page is loaded, false otherwise
-     */
-    @Step("Check if page is loaded")
-    public boolean isLoaded() {
-        log.debug("Checking if page is loaded");
-        return page.url().contains("appium.io/docs") && 
-               page.title().contains("Appium");
     }
 }
 ```
@@ -270,70 +207,19 @@ public class ExamplePage extends BasePage {
 ### 2. Create a Test Class
 
 ```java
-/**
- * Test class for Appium Documentation website
- */
-@Epic("Documentation Tests")
-@Feature("Appium Documentation")
+@Epic("Playwright Website Tests")
+@Feature("Basic Website Navigation")
 public class ExampleTest extends BaseTest {
-    private static final Logger log = LoggerFactory.getLogger(ExampleTest.class);
-
-    /**
-     * Test that verifies navigation to the Quickstart section
-     */
-    @Test(description = "Navigate to Quickstart section")
-    @Description("This test navigates to the Quickstart section and verifies the title")
-    @Severity(SeverityLevel.NORMAL)
-    @Story("Documentation Navigation")
-    public void navigateToQuickstartSection() {
-        log.info("Running test: Navigate to Quickstart section");
-        
+    @Test(description = "Verify homepage navigation")
+    @Severity(SeverityLevel.BLOCKER)
+    public void testHomePageNavigation() {
         getCurrentPage().ifPresent(page -> {
-            // Create example page and navigate
             ExamplePage examplePage = new ExamplePage(page);
-            examplePage.navigate();
-            
-            // Verify page loaded correctly
-            Assertions.assertThat(examplePage.isLoaded())
-                    .as("Appium documentation page should be loaded")
-                    .isTrue();
-            
-            // Navigate to Quickstart section
-            examplePage.navigateToSection("Quickstart");
-            
-            // Get the documentation title and verify it
-            String sectionTitle = examplePage.getDocumentationTitle();
-            log.info("Section title: {}", sectionTitle);
-            
-            // Verify the section title contains "Quickstart"
-            Assertions.assertThat(sectionTitle)
-                    .as("Section title should contain 'Quickstart'")
-                    .containsIgnoringCase("quickstart");
-        });
-    }
-
-    /**
-     * Test that searches for specific documentation content
-     */
-    @Test(description = "Search documentation")
-    @Description("This test performs a search and verifies results are returned")
-    @Severity(SeverityLevel.CRITICAL)
-    @Story("Documentation Search")
-    public void searchAppiumDocumentation() {
-        log.info("Running test: Search documentation");
-        
-        getCurrentPage().ifPresent(page -> {
-            // Create example page and navigate
-            ExamplePage examplePage = new ExamplePage(page);
-            examplePage.navigate();
-            
-            // Perform search
-            examplePage.search("write a test");
-            
-            // Verify search results
-            Assertions.assertThat(examplePage.getSearchResultCount())
-                    .as("Search should return at least one result")
-                    .isGreaterThan(0);
+            examplePage.navigate()
+                      .clickGetStarted();
+                      
+            Assertions.assertThat(examplePage.getCurrentUrl())
+                     .contains("docs/intro");
         });
     }
 }

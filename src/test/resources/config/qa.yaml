@@ -1,6 +1,6 @@
 environment:
   name: qa
-  baseUrl: https://appium.io/docs/en/latest/
+  baseUrl: https://playwright.dev/
 
 browser:
   type: firefox  # chromium, firefox, or webkit

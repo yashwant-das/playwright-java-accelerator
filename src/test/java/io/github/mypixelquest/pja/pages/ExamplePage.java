@@ -6,21 +6,52 @@ import com.microsoft.playwright.options.AriaRole;
 import io.qameta.allure.Step;
 
 /**
- * Page Object for the Appium Documentation Home Page
+ * Page Object for the Playwright Documentation Homepage
  */
 public class ExamplePage extends BasePage {
-    // URL for the Appium documentation - using latest version
-    private static final String APPIUM_DOCS_URL = "https://appium.io/docs/en/latest/";
-    
-    // Locators
-    private final Locator searchButton;
-    private final Locator searchInput;
-    private final Locator navigationLinks;
-    private final Locator darkModeButton;
-    private final Locator lightModeButton;
-    private final Locator systemPrefButton;
-    private final Locator cookieAcceptButton;
-    
+    // Base URL from config
+    private static final String BASE_URL = "https://playwright.dev/";
+
+    // Navigation and Header Elements
+    private final Locator navbar;
+    private final Locator docs;
+    private final Locator api;
+    private final Locator community;
+    private final Locator search;
+    private final Locator skipToContent;
+    private final Locator getStartedButton;
+
+    // Language Links
+    private final Locator javaLink;
+    private final Locator pythonLink;
+    private final Locator javascriptLink;
+    private final Locator typescriptLink;
+    private final Locator dotnetLink;
+    private final Locator nodejsLink;
+
+    // Tool Links
+    private final Locator codegenLink;
+    private final Locator playwrightInspectorLink;
+    private final Locator traceViewerLink;
+
+    // Community Links
+    private final Locator discordLink;
+    private final Locator githubLink;
+    private final Locator twitterLink;
+    private final Locator linkedinLink;
+    private final Locator youtubeLink;
+    private final Locator stackOverflowLink;
+
+    // Example Links
+    private final Locator accessibilityInsightsLink;
+    private final Locator adobeLink;
+    private final Locator bingLink;
+    private final Locator disneyHotstarLink;
+    private final Locator outlookLink;
+    private final Locator vsCodeLink;
+    private final Locator materialUiLink;
+    private final Locator reactNavigationLink;
+
     /**
      * Constructor for ExamplePage
      *
@@ -28,154 +59,273 @@ public class ExamplePage extends BasePage {
      */
     public ExamplePage(Page page) {
         super(page);
-        // Updated locators based on Playwright codegen with proper AriaRole enums
-        this.cookieAcceptButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Accept"));
-        this.lightModeButton = page.getByTitle("Switch to light mode");
-        this.darkModeButton = page.getByTitle("Switch to dark mode");
-        this.systemPrefButton = page.getByTitle("Switch to system preference");
-        this.searchButton = page.getByLabel("Search");
-        this.searchInput = page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Search"));
-        this.navigationLinks = page.locator("nav.md-tabs__list a.md-tabs__link");
+
+        // Initialize navigation elements
+        this.navbar = page.locator("nav.navbar");
+        this.docs = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Docs"));
+        this.api = page.locator("a[href='/docs/api/class-playwright']");
+        this.community = page.locator("a[href='/community/welcome']");
+        this.search = page.locator("button.DocSearch");
+        this.skipToContent = page.locator("a.skipToContent_fXgn");
+        this.getStartedButton = page.locator("a.getStarted_Sjon");
+
+        // Initialize language links
+        this.javaLink = page.locator("a[href='/java/']");
+        this.pythonLink = page.locator("a[href='/python/']");
+        this.javascriptLink = page.locator("text=JavaScript");
+        this.typescriptLink = page.locator("text=TypeScript");
+        this.dotnetLink = page.locator("a[href='/dotnet/']");
+        this.nodejsLink = page.locator("a[href='#']");
+
+        // Initialize tool links
+        this.codegenLink = page.locator("a[href='docs/codegen']");
+        this.playwrightInspectorLink = page.locator("a[href='docs/debug#playwright-inspector']");
+        this.traceViewerLink = page.locator("a[href='docs/trace-viewer-intro']");
+
+        // Initialize community links
+        this.discordLink = page.locator("a[href*='discord']");
+        this.githubLink = page.locator("footer a[href*='github.com/microsoft/playwright']");
+        this.twitterLink = page.locator("a[href='https://twitter.com/playwrightweb']");
+        this.linkedinLink = page.locator("a[href='https://www.linkedin.com/company/playwrightweb']");
+        this.youtubeLink = page.locator("a[href*='youtube.com']");
+        this.stackOverflowLink = page.locator("a[href*='stackoverflow.com']");
+
+        // Initialize example links
+        this.accessibilityInsightsLink = page.locator("a[href='https://accessibilityinsights.io/']");
+        this.adobeLink = page.locator("a[href*='github.com/adobe']");
+        this.bingLink = page.locator("a[href='https://bing.com']");
+        this.disneyHotstarLink = page.locator("a[href='https://www.hotstar.com/']");
+        this.outlookLink = page.locator("a[href='https://outlook.com']");
+        this.vsCodeLink = page.locator("a[href='https://code.visualstudio.com']");
+        this.materialUiLink = page.locator("a[href*='material-ui']");
+        this.reactNavigationLink = page.locator("a[href*='react-navigation']");
     }
-    
+
     /**
-     * Navigate to the Appium documentation home page
+     * Navigate to the Playwright documentation home page
      * 
      * @return ExamplePage instance for method chaining
      */
-    @Step("Navigate to Appium documentation")
+    @Step("Navigate to Playwright documentation")
     public ExamplePage navigate() {
-        log.info("Navigating to Appium documentation: {}", APPIUM_DOCS_URL);
-        page.navigate(APPIUM_DOCS_URL);
-        page.waitForLoadState();
-        
-        // Accept cookie consent if present
-        acceptCookies();
-        
+        page.navigate(BASE_URL);
         return this;
     }
-    
+
     /**
-     * Accept cookies on the page if the consent dialog is present
+     * Click Get Started button
      * 
      * @return ExamplePage instance for method chaining
      */
-    @Step("Accept cookies if present")
-    public ExamplePage acceptCookies() {
-        log.info("Attempting to accept cookies if present");
-        try {
-            if (cookieAcceptButton.isVisible()) {
-                log.info("Cookie consent dialog found, accepting");
-                cookieAcceptButton.click();
-            }
-        } catch (Exception e) {
-            log.debug("No cookie consent dialog found or it was already accepted");
+    @Step("Click Get Started button")
+    public ExamplePage clickGetStarted() {
+        getStartedButton.click();
+        return this;
+    }
+
+    /**
+     * Open search dialog
+     * 
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Open search dialog")
+    public ExamplePage openSearch() {
+        search.click();
+        return this;
+    }
+
+    /**
+     * Navigate to language-specific documentation
+     * 
+     * @param language The programming language (java, python, javascript, typescript, dotnet)
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Navigate to {language} documentation")
+    public ExamplePage navigateToLanguage(String language) {
+        switch (language.toLowerCase()) {
+            case "java":
+                javaLink.click();
+                break;
+            case "python":
+                pythonLink.click();
+                break;
+            case "javascript":
+                javascriptLink.click();
+                break;
+            case "typescript":
+                typescriptLink.click();
+                break;
+            case "dotnet":
+            case ".net":
+                dotnetLink.click();
+                break;
+            case "nodejs":
+            case "node.js":
+                nodejsLink.click();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported language: " + language);
         }
         return this;
     }
-    
+
     /**
-     * Search for a given term
-     *
-     * @param searchTerm The term to search for
-     * @return ExamplePage instance for method chaining
-     */
-    @Step("Search for: {searchTerm}")
-    public ExamplePage search(String searchTerm) {
-        log.info("Searching for: {}", searchTerm);
-        
-        searchButton.click();
-        searchInput.fill(searchTerm);
-        searchInput.press("Enter");
-        page.waitForLoadState();
-        
-        return this;
-    }
-    
-    /**
-     * Navigate to specific section in documentation
-     *
-     * @param sectionName The name of the section to navigate to
-     * @return ExamplePage instance for method chaining
-     */
-    @Step("Navigate to section: {sectionName}")
-    public ExamplePage navigateToSection(String sectionName) {
-        log.info("Navigating to section: {}", sectionName);
-        
-        // Use the navigation links with the exact name from tabs
-        page.locator("nav.md-tabs__list a.md-tabs__link:has-text('" + sectionName + "')").first().click();
-        page.waitForLoadState();
-        
-        return this;
-    }
-    
-    /**
-     * Switch to light mode
+     * Navigate to a tool page
      * 
+     * @param tool The tool name (codegen, inspector, trace-viewer)
      * @return ExamplePage instance for method chaining
      */
-    @Step("Switch to light mode")
-    public ExamplePage switchToLightMode() {
-        log.info("Switching to light mode");
-        lightModeButton.click();
+    @Step("Navigate to {tool}")
+    public ExamplePage navigateToTool(String tool) {
+        switch (tool.toLowerCase()) {
+            case "codegen":
+                codegenLink.click();
+                break;
+            case "inspector":
+                playwrightInspectorLink.click();
+                break;
+            case "trace-viewer":
+                traceViewerLink.click();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported tool: " + tool);
+        }
         return this;
     }
-    
+
     /**
-     * Switch to dark mode
+     * Navigate to community resources
      * 
+     * @param platform The platform name (discord, github, twitter, linkedin, youtube, stackoverflow)
      * @return ExamplePage instance for method chaining
      */
-    @Step("Switch to dark mode")
-    public ExamplePage switchToDarkMode() {
-        log.info("Switching to dark mode");
-        darkModeButton.click();
+    @Step("Navigate to {platform}")
+    public ExamplePage navigateToCommunity(String platform) {
+        switch (platform.toLowerCase()) {
+            case "discord":
+                discordLink.click();
+                break;
+            case "github":
+                githubLink.click();
+                break;
+            case "twitter":
+                twitterLink.click();
+                break;
+            case "linkedin":
+                linkedinLink.click();
+                break;
+            case "youtube":
+                youtubeLink.click();
+                break;
+            case "stackoverflow":
+                stackOverflowLink.click();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported platform: " + platform);
+        }
         return this;
     }
-    
+
     /**
-     * Switch to system preference mode
+     * Navigate to example sites
      * 
+     * @param site The example site name
      * @return ExamplePage instance for method chaining
      */
-    @Step("Switch to system preference")
-    public ExamplePage switchToSystemPreference() {
-        log.info("Switching to system preference");
-        systemPrefButton.click();
+    @Step("Navigate to example site: {site}")
+    public ExamplePage navigateToExample(String site) {
+        switch (site.toLowerCase()) {
+            case "accessibility-insights":
+                accessibilityInsightsLink.click();
+                break;
+            case "adobe":
+                adobeLink.click();
+                break;
+            case "bing":
+                bingLink.click();
+                break;
+            case "disney-hotstar":
+                disneyHotstarLink.click();
+                break;
+            case "outlook":
+                outlookLink.click();
+                break;
+            case "vscode":
+                vsCodeLink.click();
+                break;
+            case "material-ui":
+                materialUiLink.click();
+                break;
+            case "react-navigation":
+                reactNavigationLink.click();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported example site: " + site);
+        }
         return this;
     }
-    
-    /**
-     * Get the current documentation page title
-     *
-     * @return The title of the current page
-     */
-    @Step("Get documentation page title")
-    public String getDocumentationTitle() {
-        String title = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setLevel(1)).textContent();
-        log.info("Documentation title: {}", title);
-        return title;
-    }
-    
-    /**
-     * Count the number of search results
-     *
-     * @return Number of search results found
-     */
-    @Step("Count search results")
-    public int getSearchResultCount() {
-        return page.locator("ol.md-search-result__list li").count();
-    }
-    
+
     /**
      * Check if the page is loaded
      *
-     * @return true if page is loaded, false otherwise
+     * @return true if the page is loaded, false otherwise
      */
-    @Step("Check if Appium documentation is loaded")
+    @Step("Check if page is loaded")
     public boolean isLoaded() {
-        log.debug("Checking if Appium documentation is loaded");
-        return page.url().contains("appium.io/docs") && 
-               page.title().contains("Appium");
+        return navbar.isVisible() && getStartedButton.isVisible();
+    }
+
+    /**
+     * Get the current page URL
+     *
+     * @return the current page URL
+     */
+    @Step("Get current URL")
+    public String getCurrentUrl() {
+        return page.url();
+    }
+
+    /**
+     * Click on Docs link in the navigation
+     * 
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Click Docs link")
+    public ExamplePage clickDocs() {
+        docs.click();
+        return this;
+    }
+
+    /**
+     * Click on API link in the navigation
+     * 
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Click API link")
+    public ExamplePage clickApi() {
+        api.click();
+        return this;
+    }
+
+    /**
+     * Click on Community link in the navigation
+     * 
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Click Community link")
+    public ExamplePage clickCommunity() {
+        community.click();
+        return this;
+    }
+
+    /**
+     * Click on Skip to Content link for accessibility
+     * 
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Click Skip to Content link")
+    public ExamplePage clickSkipToContent() {
+        skipToContent.click();
+        return this;
     }
 }
