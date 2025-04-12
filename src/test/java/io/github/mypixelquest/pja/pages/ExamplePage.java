@@ -3,6 +3,7 @@ package io.github.mypixelquest.pja.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import io.qameta.allure.Step;
 
 /**
@@ -18,8 +19,10 @@ public class ExamplePage extends BasePage {
     private final Locator api;
     private final Locator community;
     private final Locator search;
+    private final Locator searchModal;
     private final Locator skipToContent;
     private final Locator getStartedButton;
+    private final Locator languageDropdown;
 
     // Language Links
     private final Locator javaLink;
@@ -66,8 +69,10 @@ public class ExamplePage extends BasePage {
         this.api = page.locator("a[href='/docs/api/class-playwright']");
         this.community = page.locator("a[href='/community/welcome']");
         this.search = page.locator("button.DocSearch");
+        this.searchModal = page.locator("div.DocSearch-Modal");
         this.skipToContent = page.locator("a.skipToContent_fXgn");
         this.getStartedButton = page.locator("a.getStarted_Sjon");
+        this.languageDropdown = page.locator("div.navbar__item.dropdown.dropdown--hoverable");
 
         // Initialize language links
         this.javaLink = page.locator("a[href='/java/']");
@@ -124,13 +129,36 @@ public class ExamplePage extends BasePage {
     }
 
     /**
-     * Open search dialog
+     * Open search dialog and wait for it to be visible
      * 
      * @return ExamplePage instance for method chaining
      */
     @Step("Open search dialog")
     public ExamplePage openSearch() {
         search.click();
+        // Wait for the search modal to be visible
+        searchModal.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        return this;
+    }
+
+    /**
+     * Check if search modal is visible
+     *
+     * @return true if search modal is visible, false otherwise
+     */
+    @Step("Check if search modal is visible")
+    public boolean isSearchModalVisible() {
+        return searchModal.isVisible();
+    }
+
+    /**
+     * Click the language dropdown to show language options
+     * 
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Click language dropdown")
+    public ExamplePage clickLanguageDropdown() {
+        languageDropdown.click();
         return this;
     }
 
@@ -142,6 +170,10 @@ public class ExamplePage extends BasePage {
      */
     @Step("Navigate to {language} documentation")
     public ExamplePage navigateToLanguage(String language) {
+        // First click the language dropdown
+        clickLanguageDropdown();
+        
+        // Then select the specific language
         switch (language.toLowerCase()) {
             case "java":
                 javaLink.click();

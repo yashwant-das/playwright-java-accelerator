@@ -3,7 +3,7 @@ environment:
   baseUrl: https://playwright.dev/
 
 browser:
-  type: firefox  # chromium, firefox, or webkit
+  type: chromium  # chromium, firefox, or webkit
   headless: false  # run tests in headless mode
   slowMo: 0       # milliseconds to wait between actions
   timeout: 30000  # default timeout in milliseconds

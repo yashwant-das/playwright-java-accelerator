@@ -97,9 +97,8 @@ public class ExampleTest extends BaseTest {
             // Open search dialog
             examplePage.openSearch();
             
-            // Verify search dialog is visible (using page reference directly for this check)
-            boolean isSearchVisible = page.locator("div.DocSearch-Modal").isVisible();
-            Assertions.assertThat(isSearchVisible)
+            // Verify search dialog is visible using the page object method
+            Assertions.assertThat(examplePage.isSearchModalVisible())
                     .as("Search modal should be visible")
                     .isTrue();
         });
