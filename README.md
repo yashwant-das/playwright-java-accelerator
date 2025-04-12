@@ -121,13 +121,29 @@ Run a specific test group:
 mvn test -Dgroups=smoke
 ```
 
-### Generating Reports
+### Viewing Test Results
 
-Generate and open Allure report:
+#### Local Test Results
+After running tests locally, you can view the Allure report by running:
 ```bash
 mvn allure:report
 mvn allure:serve
 ```
+This will generate and open the Allure report in your default browser.
+
+#### CI/CD Test Results
+The test results are automatically published to GitHub Pages after each CI/CD run. You can view them at:
+```
+https://mypixelquest.github.io/playwright-java-accelerator/
+```
+
+The report includes:
+- Test execution history
+- Test case details
+- Screenshots of failed tests
+- Test duration and status
+- Environment information
+- Test categories and tags
 
 ## Continuous Integration/Deployment
 
@@ -293,7 +309,7 @@ To modify parallel execution settings:
    testExecution:
      parallel: true
      threadCount: 3
-     ```
+    ```
 
 ## Included Test Examples
 
