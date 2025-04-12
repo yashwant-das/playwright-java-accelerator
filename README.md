@@ -293,7 +293,7 @@ To modify parallel execution settings:
    testExecution:
      parallel: true
      threadCount: 3
-```
+     ```
 
 ## Included Test Examples
 
