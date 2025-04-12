@@ -10,6 +10,7 @@ public class ConfigModel {
     private EnvironmentConfig environment;
     private BrowserConfig browser;
     private ScreenshotConfig screenshot;
+    private TestExecutionConfig testExecution;
     
     @Data
     public static class EnvironmentConfig {
@@ -29,5 +30,11 @@ public class ConfigModel {
     public static class ScreenshotConfig {
         private boolean takeOnFailure;
         private boolean fullPage;
+    }
+
+    @Data
+    public static class TestExecutionConfig {
+        private boolean parallel;
+        private int threadCount;
     }
 }

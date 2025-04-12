@@ -4,6 +4,7 @@
 <suite name="Playwright Website Test Suite" verbose="2">
     <listeners>
         <listener class-name="io.github.mypixelquest.pja.listeners.ScreenshotListener" />
+        <listener class-name="io.github.mypixelquest.pja.listeners.ParallelExecutionListener" />
     </listeners>
     
     <parameter name="browser" value="chromium" />
