@@ -24,8 +24,8 @@ jobs:
 
     - name: Clean Allure Results
       run: |
-        rm -rf allure-results/*
         rm -rf target/allure-results/*
+        mkdir -p target/allure-results
 
     - name: Install Playwright browsers
       run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
@@ -35,7 +35,11 @@ jobs:
 
     - name: Generate Allure Report
       if: always()
-      run: mvn allure:report
+      run: |
+        mvn allure:report
+        # Verify results exist
+        ls -la target/allure-results/
+        ls -la target/site/allure-maven-plugin/
 
     - name: Upload Allure Report
       if: always()
