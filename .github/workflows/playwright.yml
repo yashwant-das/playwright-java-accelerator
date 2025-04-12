@@ -22,6 +22,13 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2-
+
     - name: Clean Allure Results
       run: |
         rm -rf target/allure-results/*
@@ -41,12 +48,27 @@ jobs:
         ls -la target/allure-results/
         ls -la target/site/allure-maven-plugin/
 
+    - name: Create redirect HTML
+      if: always()
+      run: |
+        echo '<!DOCTYPE html>
+        <html>
+        <head>
+            <meta http-equiv="refresh" content="0; url=./allure-maven-plugin/index.html" />
+            <title>Allure Report</title>
+        </head>
+        <body>
+            <p>Redirecting to Allure Report...</p>
+            <p>If you are not redirected automatically, <a href="./allure-maven-plugin/index.html">click here</a>.</p>
+        </body>
+        </html>' > target/site/index.html
+
     - name: Upload Allure Report
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: allure-report
-        path: target/site/allure-maven-plugin/
+        path: target/site/
         retention-days: 30
         compression-level: 6
         overwrite: true
@@ -60,3 +82,28 @@ jobs:
         retention-days: 7
         compression-level: 6
         overwrite: true
+
+  deploy:
+    name: Deploy Report
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-report
+          path: target/site
+
+      - name: Deploy to main branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: target/site
+          publish_branch: main
+          force_orphan: false
+          keep_files: true
