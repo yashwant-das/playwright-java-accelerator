@@ -38,9 +38,9 @@ src/
                 ScreenshotListener.java  # Auto-screenshot on failure
               pages/                  # Page Object Model classes
                 BasePage.java         # Base page object functionality
-                HomePage.java         # Example page implementation
+                ExamplePage.java      # Example page implementation
               tests/                  # TestNG test classes
-                SampleTest.java       # Example test implementation
+                ExampleTest.java      # Example test implementation
               utils/                  # Helper utilities
                 ConfigReader.java     # Configuration loader
     resources/
@@ -48,6 +48,7 @@ src/
         qa.yaml                       # QA environment config
       logback.xml                     # Logging configuration
       suites/                         # TestNG XML suite files
+        example-suite.xml             # Example-specific test suite
         testng.xml                    # Main test suite
 ```
 
@@ -76,6 +77,12 @@ src/
 Run the default test suite:
 ```bash
 mvn test
+```
+
+Run specific test suites:
+```bash
+mvn test -DsuiteXmlFile=src/test/resources/suites/example-suite.xml
+mvn test -DsuiteXmlFile=src/test/resources/suites/testng.xml
 ```
 
 Run with specific browser:
@@ -114,7 +121,7 @@ Example configuration (qa.yaml):
 ```yaml
 environment:
   name: qa
-  baseUrl: https://qa.example.com
+  baseUrl: https://appium.io/docs/en/latest/
 
 browser:
   type: chromium  # chromium, firefox, or webkit
@@ -127,31 +134,135 @@ screenshot:
   fullPage: true
 ```
 
+## Included Test Examples
+
+The framework includes a comprehensive example test:
+
+### Example Website Tests
+
+The `ExampleTest` class demonstrates how to interact with the Appium documentation website:
+- Navigation to specific sections of the documentation
+- Searching for content using the search functionality
+- Testing the dark mode toggle functionality
+- Verifying documentation titles and search results
+
+Run these tests with:
+```bash
+mvn test
+```
+
+Or specifically:
+```bash
+mvn test -DsuiteXmlFile=src/test/resources/suites/example-suite.xml
+```
+
 ## Creating Tests
 
 ### 1. Create a Page Object
 
 ```java
-public class LoginPage extends BasePage {
-    private final Locator usernameInput;
-    private final Locator passwordInput;
-    private final Locator loginButton;
+public class ExamplePage extends BasePage {
+    // URL for the page
+    private static final String EXAMPLE_URL = "https://appium.io/docs/en/latest/";
     
-    public LoginPage(Page page) {
+    // Locators
+    private final Locator searchButton;
+    private final Locator searchInput;
+    private final Locator navigationLinks;
+    private final Locator quickstartLink;
+    private final Locator darkModeButton;
+    
+    /**
+     * Constructor for ExamplePage
+     *
+     * @param page Playwright Page object
+     */
+    public ExamplePage(Page page) {
         super(page);
-        this.usernameInput = page.locator("#username");
-        this.passwordInput = page.locator("#password");
-        this.loginButton = page.locator("#login");
+        this.searchButton = page.locator("button[class*='md-search__icon']").first();
+        this.searchInput = page.locator("input[placeholder='Search']");
+        this.navigationLinks = page.locator("nav.md-nav--primary a.md-nav__link");
+        this.quickstartLink = page.locator("a:has-text('Quickstart')");
+        this.darkModeButton = page.locator("button[data-md-color-scheme]");
     }
     
-    @Step("Login with username: {username}")
-    public DashboardPage login(String username, String password) {
-        log.info("Logging in with username: {}", username);
-        usernameInput.fill(username);
-        passwordInput.fill(password);
-        loginButton.click();
+    /**
+     * Navigate to the example page
+     * 
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Navigate to example page")
+    public ExamplePage navigate() {
+        log.info("Navigating to example page: {}", EXAMPLE_URL);
+        page.navigate(EXAMPLE_URL);
         page.waitForLoadState();
-        return new DashboardPage(page);
+        return this;
+    }
+    
+    /**
+     * Search for a given term
+     *
+     * @param searchTerm The term to search for
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Search for: {searchTerm}")
+    public ExamplePage search(String searchTerm) {
+        log.info("Searching for: {}", searchTerm);
+        searchButton.click();
+        searchInput.fill(searchTerm);
+        searchInput.press("Enter");
+        page.waitForLoadState();
+        return this;
+    }
+    
+    /**
+     * Navigate to specific section in documentation
+     *
+     * @param sectionName The name of the section to navigate to
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Navigate to section: {sectionName}")
+    public ExamplePage navigateToSection(String sectionName) {
+        log.info("Navigating to section: {}", sectionName);
+        page.locator("a:has-text('" + sectionName + "')").first().click();
+        page.waitForLoadState();
+        return this;
+    }
+    
+    /**
+     * Toggle between dark and light mode
+     * 
+     * @return ExamplePage instance for method chaining
+     */
+    @Step("Toggle dark/light mode")
+    public ExamplePage toggleDarkMode() {
+        log.info("Toggling dark/light mode");
+        darkModeButton.click();
+        return this;
+    }
+    
+    /**
+     * Get the current documentation page title
+     *
+     * @return The title of the current page
+     */
+    @Step("Get documentation page title")
+    public String getDocumentationTitle() {
+        String title = page.locator("article h1").textContent();
+        log.info("Documentation title: {}", title);
+        return title;
+    }
+    
+    /**
+     * Check if the page is loaded
+     *
+     * @return true if page is loaded, false otherwise
+     */
+    @Step("Check if page is loaded")
+    public boolean isLoaded() {
+        log.debug("Checking if page is loaded");
+        return page.url().contains("appium.io/docs") && 
+               page.title().contains("Appium");
     }
 }
 ```
@@ -159,25 +270,70 @@ public class LoginPage extends BasePage {
 ### 2. Create a Test Class
 
 ```java
-@Epic("Authentication")
-@Feature("Login")
-public class LoginTests extends BaseTest {
-    
-    @Test(description = "Verify successful login")
-    @Description("Tests that a user can successfully log in with valid credentials")
-    @Severity(SeverityLevel.CRITICAL)
-    public void verifySuccessfulLogin() {
+/**
+ * Test class for Appium Documentation website
+ */
+@Epic("Documentation Tests")
+@Feature("Appium Documentation")
+public class ExampleTest extends BaseTest {
+    private static final Logger log = LoggerFactory.getLogger(ExampleTest.class);
+
+    /**
+     * Test that verifies navigation to the Quickstart section
+     */
+    @Test(description = "Navigate to Quickstart section")
+    @Description("This test navigates to the Quickstart section and verifies the title")
+    @Severity(SeverityLevel.NORMAL)
+    @Story("Documentation Navigation")
+    public void navigateToQuickstartSection() {
+        log.info("Running test: Navigate to Quickstart section");
+        
         getCurrentPage().ifPresent(page -> {
-            // Create page objects
-            LoginPage loginPage = new LoginPage(page);
+            // Create example page and navigate
+            ExamplePage examplePage = new ExamplePage(page);
+            examplePage.navigate();
             
-            // Perform actions
-            DashboardPage dashboardPage = loginPage.login("testuser", "password123");
+            // Verify page loaded correctly
+            Assertions.assertThat(examplePage.isLoaded())
+                    .as("Appium documentation page should be loaded")
+                    .isTrue();
             
-            // Assertions
-            assertThat(dashboardPage.getUsernameDisplay())
-                .as("Username should be displayed after login")
-                .isEqualTo("testuser");
+            // Navigate to Quickstart section
+            examplePage.navigateToSection("Quickstart");
+            
+            // Get the documentation title and verify it
+            String sectionTitle = examplePage.getDocumentationTitle();
+            log.info("Section title: {}", sectionTitle);
+            
+            // Verify the section title contains "Quickstart"
+            Assertions.assertThat(sectionTitle)
+                    .as("Section title should contain 'Quickstart'")
+                    .containsIgnoringCase("quickstart");
+        });
+    }
+
+    /**
+     * Test that searches for specific documentation content
+     */
+    @Test(description = "Search documentation")
+    @Description("This test performs a search and verifies results are returned")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Documentation Search")
+    public void searchAppiumDocumentation() {
+        log.info("Running test: Search documentation");
+        
+        getCurrentPage().ifPresent(page -> {
+            // Create example page and navigate
+            ExamplePage examplePage = new ExamplePage(page);
+            examplePage.navigate();
+            
+            // Perform search
+            examplePage.search("write a test");
+            
+            // Verify search results
+            Assertions.assertThat(examplePage.getSearchResultCount())
+                    .as("Search should return at least one result")
+                    .isGreaterThan(0);
         });
     }
 }

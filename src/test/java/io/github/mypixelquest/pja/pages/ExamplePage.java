@@ -7,7 +7,7 @@ import io.qameta.allure.Step;
 /**
  * Page Object for the Appium Documentation Home Page
  */
-public class HomePage extends BasePage {
+public class ExamplePage extends BasePage {
     // URL for the Appium documentation
     private static final String APPIUM_DOCS_URL = "https://appium.io/docs/en/latest/";
     
@@ -19,11 +19,11 @@ public class HomePage extends BasePage {
     private final Locator darkModeButton;
     
     /**
-     * Constructor for HomePage
+     * Constructor for ExamplePage
      *
      * @param page Playwright Page object
      */
-    public HomePage(Page page) {
+    public ExamplePage(Page page) {
         super(page);
         this.searchButton = page.locator("button[class*='md-search__icon']").first();
         this.searchInput = page.locator("input[placeholder='Search']");
@@ -35,10 +35,10 @@ public class HomePage extends BasePage {
     /**
      * Navigate to the Appium documentation home page
      * 
-     * @return HomePage instance for method chaining
+     * @return ExamplePage instance for method chaining
      */
     @Step("Navigate to Appium documentation")
-    public HomePage navigate() {
+    public ExamplePage navigate() {
         log.info("Navigating to Appium documentation: {}", APPIUM_DOCS_URL);
         page.navigate(APPIUM_DOCS_URL);
         page.waitForLoadState();
@@ -49,10 +49,10 @@ public class HomePage extends BasePage {
      * Search for a given term
      *
      * @param searchTerm The term to search for
-     * @return HomePage instance for method chaining
+     * @return ExamplePage instance for method chaining
      */
     @Step("Search for: {searchTerm}")
-    public HomePage search(String searchTerm) {
+    public ExamplePage search(String searchTerm) {
         log.info("Searching for: {}", searchTerm);
         searchButton.click();
         searchInput.fill(searchTerm);
@@ -65,10 +65,10 @@ public class HomePage extends BasePage {
      * Navigate to specific section in documentation
      *
      * @param sectionName The name of the section to navigate to
-     * @return HomePage instance for method chaining
+     * @return ExamplePage instance for method chaining
      */
     @Step("Navigate to section: {sectionName}")
-    public HomePage navigateToSection(String sectionName) {
+    public ExamplePage navigateToSection(String sectionName) {
         log.info("Navigating to section: {}", sectionName);
         page.locator("a:has-text('" + sectionName + "')").first().click();
         page.waitForLoadState();
@@ -78,10 +78,10 @@ public class HomePage extends BasePage {
     /**
      * Toggle between dark and light mode
      * 
-     * @return HomePage instance for method chaining
+     * @return ExamplePage instance for method chaining
      */
     @Step("Toggle dark/light mode")
-    public HomePage toggleDarkMode() {
+    public ExamplePage toggleDarkMode() {
         log.info("Toggling dark/light mode");
         darkModeButton.click();
         return this;

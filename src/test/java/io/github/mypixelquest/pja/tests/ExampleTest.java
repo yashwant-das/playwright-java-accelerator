@@ -1,7 +1,7 @@
 package io.github.mypixelquest.pja.tests;
 
 import io.github.mypixelquest.pja.base.BaseTest;
-import io.github.mypixelquest.pja.pages.HomePage;
+import io.github.mypixelquest.pja.pages.ExamplePage;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
@@ -14,12 +14,12 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 /**
- * Sample test class for Appium Documentation website
+ * Test class for Appium Documentation website using ExamplePage
  */
 @Epic("Documentation Tests")
 @Feature("Appium Documentation")
-public class SampleTest extends BaseTest {
-    private static final Logger log = LoggerFactory.getLogger(SampleTest.class);
+public class ExampleTest extends BaseTest {
+    private static final Logger log = LoggerFactory.getLogger(ExampleTest.class);
 
     /**
      * Test that verifies navigation to the Quickstart section
@@ -32,20 +32,20 @@ public class SampleTest extends BaseTest {
         log.info("Running test: Navigate to Quickstart section");
         
         getCurrentPage().ifPresent(page -> {
-            // Create home page and navigate to Appium docs
-            HomePage homePage = new HomePage(page);
-            homePage.navigate();
+            // Create example page and navigate to Appium docs
+            ExamplePage examplePage = new ExamplePage(page);
+            examplePage.navigate();
             
             // Verify page loaded correctly
-            Assertions.assertThat(homePage.isLoaded())
+            Assertions.assertThat(examplePage.isLoaded())
                     .as("Appium documentation page should be loaded")
                     .isTrue();
             
             // Navigate to Quickstart section
-            homePage.navigateToSection("Quickstart");
+            examplePage.navigateToSection("Quickstart");
             
             // Get the documentation title and verify it
-            String sectionTitle = homePage.getDocumentationTitle();
+            String sectionTitle = examplePage.getDocumentationTitle();
             log.info("Section title: {}", sectionTitle);
             
             // Verify the section title contains "Quickstart"
@@ -66,15 +66,15 @@ public class SampleTest extends BaseTest {
         log.info("Running test: Search Appium documentation");
         
         getCurrentPage().ifPresent(page -> {
-            // Create home page and navigate to Appium docs
-            HomePage homePage = new HomePage(page);
-            homePage.navigate();
+            // Create example page and navigate to Appium docs
+            ExamplePage examplePage = new ExamplePage(page);
+            examplePage.navigate();
             
             // Perform search for "write a test"
-            homePage.search("write a test");
+            examplePage.search("write a test");
             
             // Get search result count
-            int resultCount = homePage.getSearchResultCount();
+            int resultCount = examplePage.getSearchResultCount();
             log.info("Search result count: {}", resultCount);
             
             // Verify we have search results
@@ -83,12 +83,37 @@ public class SampleTest extends BaseTest {
                     .isGreaterThan(0);
             
             // Verify current URL contains search term
-            String currentUrl = homePage.getCurrentUrl();
+            String currentUrl = examplePage.getCurrentUrl();
             log.info("Current URL after search: {}", currentUrl);
             
             Assertions.assertThat(currentUrl)
                     .as("URL should indicate search was performed")
                     .contains("search");
+        });
+    }
+    
+    /**
+     * Test that verifies dark mode toggle functionality
+     */
+    @Test(description = "Toggle dark mode")
+    @Description("This test verifies the dark mode toggle functionality")
+    @Severity(SeverityLevel.MINOR)
+    @Story("UI Customization")
+    public void toggleDarkMode() {
+        log.info("Running test: Toggle dark mode");
+        
+        getCurrentPage().ifPresent(page -> {
+            // Create example page and navigate to Appium docs
+            ExamplePage examplePage = new ExamplePage(page);
+            examplePage.navigate();
+            
+            // Toggle dark mode
+            examplePage.toggleDarkMode();
+            
+            // Note: Since we can't easily verify the visual change in dark mode
+            // through automated tests without visual validation tools,
+            // we're just verifying that the toggle action completes without errors
+            log.info("Dark mode toggled successfully");
         });
     }
 }
