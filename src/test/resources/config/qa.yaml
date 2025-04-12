@@ -3,8 +3,8 @@ environment:
   baseUrl: https://appium.io/docs/en/latest/
 
 browser:
-  type: chromium  # chromium, firefox, or webkit
-  headless: true
+  type: firefox  # chromium, firefox, or webkit
+  headless: false  # run tests in headless mode
   slowMo: 0       # milliseconds to wait between actions
   timeout: 30000  # default timeout in milliseconds
   

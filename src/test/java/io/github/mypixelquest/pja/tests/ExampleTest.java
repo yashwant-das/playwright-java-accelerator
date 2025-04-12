@@ -34,7 +34,8 @@ public class ExampleTest extends BaseTest {
         getCurrentPage().ifPresent(page -> {
             // Create example page and navigate to Appium docs
             ExamplePage examplePage = new ExamplePage(page);
-            examplePage.navigate();
+            examplePage.navigate()
+                       .acceptCookies(); // Explicitly accept cookies
             
             // Verify page loaded correctly
             Assertions.assertThat(examplePage.isLoaded())
@@ -68,10 +69,11 @@ public class ExampleTest extends BaseTest {
         getCurrentPage().ifPresent(page -> {
             // Create example page and navigate to Appium docs
             ExamplePage examplePage = new ExamplePage(page);
-            examplePage.navigate();
+            examplePage.navigate()
+                       .acceptCookies(); // Explicitly accept cookies
             
-            // Perform search for "write a test"
-            examplePage.search("write a test");
+            // Perform search for "uiautomator" to match the sample code
+            examplePage.search("uiautomator");
             
             // Get search result count
             int resultCount = examplePage.getSearchResultCount();
@@ -93,27 +95,32 @@ public class ExampleTest extends BaseTest {
     }
     
     /**
-     * Test that verifies dark mode toggle functionality
+     * Test that verifies theme switching functionality
      */
-    @Test(description = "Toggle dark mode")
-    @Description("This test verifies the dark mode toggle functionality")
+    @Test(description = "Test theme switching")
+    @Description("This test verifies the theme switching functionality")
     @Severity(SeverityLevel.MINOR)
     @Story("UI Customization")
-    public void toggleDarkMode() {
-        log.info("Running test: Toggle dark mode");
+    public void testThemeSwitching() {
+        log.info("Running test: Test theme switching");
         
         getCurrentPage().ifPresent(page -> {
             // Create example page and navigate to Appium docs
             ExamplePage examplePage = new ExamplePage(page);
-            examplePage.navigate();
+            examplePage.navigate()
+                       .acceptCookies(); // Explicitly accept cookies
             
-            // Toggle dark mode
-            examplePage.toggleDarkMode();
+            // Switch to light mode
+            examplePage.switchToLightMode();
+            log.info("Switched to light mode successfully");
             
-            // Note: Since we can't easily verify the visual change in dark mode
-            // through automated tests without visual validation tools,
-            // we're just verifying that the toggle action completes without errors
-            log.info("Dark mode toggled successfully");
+            // Switch to dark mode
+            examplePage.switchToDarkMode();
+            log.info("Switched to dark mode successfully");
+            
+            // Switch to system preference
+            examplePage.switchToSystemPreference();
+            log.info("Switched to system preference successfully");
         });
     }
 }
