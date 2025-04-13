@@ -2,6 +2,9 @@
 
 [![Playwright Tests](https://github.com/mypixelquest/playwright-java-accelerator/actions/workflows/playwright.yml/badge.svg)](https://github.com/mypixelquest/playwright-java-accelerator/actions/workflows/playwright.yml)
 
+![Image](https://github.com/user-attachments/assets/b2291960-c56f-4414-8147-5919d0619878)
+
+
 A robust, maintainable, and modern test automation framework using Java 17 and Playwright. This framework utilizes TestNG for test orchestration, Allure for rich reporting, SLF4j/Logback for logging, and includes best practices like the Page Object Model, parallel execution readiness, and automatic screenshots on failure.
 
 ## Features
