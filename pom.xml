@@ -166,12 +166,14 @@
                         </goals>
                         <configuration>
                             <target>
-                                <exec executable="mvn" failonerror="true">
-                                    <arg value="exec:java"/>
-                                    <arg value="-e"/>
-                                    <arg value="-Dexec.mainClass=com.microsoft.playwright.CLI"/>
-                                    <arg value="-Dexec.args=install"/>
-                                </exec>
+                                <!-- Use exec:java directly instead of calling mvn -->
+                                <java classname="com.microsoft.playwright.CLI" fork="true" failonerror="true">
+                                    <classpath>
+                                        <path refid="maven.compile.classpath" />
+                                        <path refid="maven.plugin.classpath" />
+                                    </classpath>
+                                    <arg value="install" />
+                                </java>
                             </target>
                         </configuration>
                     </execution>
