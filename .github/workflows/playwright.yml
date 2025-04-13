@@ -45,8 +45,13 @@ jobs:
         if (Test-Path target/allure-results) { Remove-Item target/allure-results -Recurse }
         New-Item -Path target/allure-results -ItemType Directory -Force
 
-    - name: Install Playwright browsers
+    - name: Install Playwright browsers (Unix)
+      if: runner.os != 'Windows'
       run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
+
+    - name: Install Playwright browsers (Windows)
+      if: runner.os == 'Windows'
+      run: mvn exec:java "-Dexec.mainClass=com.microsoft.playwright.CLI" "-Dexec.args=install"
 
     - name: Run tests
       run: mvn clean test
