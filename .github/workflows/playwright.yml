@@ -9,8 +9,12 @@ on:
 
 jobs:
   test:
-    name: Run Tests
-    runs-on: macos-latest
+    name: Run Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
     
     steps:
     - uses: actions/checkout@v4
@@ -29,10 +33,17 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2-
 
-    - name: Clean Allure Results
+    - name: Clean Allure Results (Unix)
+      if: runner.os != 'Windows'
       run: |
         rm -rf target/allure-results/*
         mkdir -p target/allure-results
+
+    - name: Clean Allure Results (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        if (Test-Path target/allure-results) { Remove-Item target/allure-results -Recurse }
+        New-Item -Path target/allure-results -ItemType Directory -Force
 
     - name: Install Playwright browsers
       run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
@@ -44,9 +55,18 @@ jobs:
       if: always()
       run: |
         mvn allure:report
-        # Verify results exist
+
+    - name: Verify report files (Unix)
+      if: always() && runner.os != 'Windows'
+      run: |
         ls -la target/allure-results/
         ls -la target/site/allure-maven-plugin/
+
+    - name: Verify report files (Windows)
+      if: always() && runner.os == 'Windows'
+      run: |
+        Get-ChildItem -Path target/allure-results/
+        Get-ChildItem -Path target/site/allure-maven-plugin/
 
     - name: Create redirect HTML
       if: always()
@@ -67,7 +87,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: allure-report
+        name: allure-report-${{ matrix.os }}
         path: target/site/
         retention-days: 30
         compression-level: 6
@@ -77,7 +97,7 @@ jobs:
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: test-screenshots
+        name: test-screenshots-${{ matrix.os }}
         path: target/screenshots/
         retention-days: 7
         compression-level: 6
@@ -96,11 +116,21 @@ jobs:
           token: ${{ secrets.GH_PAGES_TOKEN }}
           fetch-depth: 0
 
-      - name: Download Allure Report
+      - name: Download macOS Allure Report
         uses: actions/download-artifact@v4
         with:
-          name: allure-report
+          name: allure-report-macos-latest
           path: target/site
+
+      - name: Download Windows Allure Report
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-report-windows-latest
+          path: target/site/windows-report
+          
+      - name: Update index file to include Windows report link
+        run: |
+          sed -i 's/<\/body>/<p><a href="\.\/windows-report\/allure-maven-plugin\/index.html">View Windows Test Report<\/a><\/p><\/body>/g' target/site/index.html
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
