@@ -54,18 +54,31 @@ src/
                 BaseTest.java         # Core test setup & teardown
               config/                 # Configuration models
                 ConfigModel.java      # YAML configuration POJO
+                TestConfig.java       # Configuration access singleton
+              data/                   # Test data management
+                TestDataManager.java  # Data loading from various formats
+                TestDataGenerator.java # Dynamic test data generation
               listeners/              # TestNG & Allure listeners
                 ScreenshotListener.java  # Auto-screenshot on failure
+                RetryAnalyzer.java    # Test retry mechanism
               pages/                  # Page Object Model classes
                 BasePage.java         # Base page object functionality
                 ExamplePage.java      # Example page implementation
               tests/                  # TestNG test classes
                 ExampleTest.java      # Example test implementation
+                TestDataDemoTest.java # Data management demonstration tests
               utils/                  # Helper utilities
                 ConfigReader.java     # Configuration loader
+                WebDriverManager.java # WebDriver singleton for Selenium
     resources/
       config/                         # Configuration files
         qa.yaml                       # QA environment config
+      data/                           # Test data files
+        orders.json                   # Example JSON test data
+        products.csv                  # Example CSV test data
+        test-data.yaml               # Example YAML test data
+        qa/                           # Environment-specific data (QA)
+        prod/                         # Environment-specific data (Production)
       logback.xml                     # Logging configuration
       suites/                         # TestNG XML suite files
         example-suite.xml             # Example-specific test suite
@@ -317,14 +330,76 @@ To modify parallel execution settings:
 
 ## Test Data Management
 
-The framework provides comprehensive test data management capabilities through multiple approaches:
+The framework provides comprehensive test data management capabilities through multiple approaches. These are implemented through the `TestDataManager` and `TestDataGenerator` classes and demonstrated in the `TestDataDemoTest` class.
 
-### 1. YAML Configuration Files
+### Data Management Components
 
-Store test data in YAML files for easy maintenance and environment-specific configurations:
+#### TestDataManager
+
+The `TestDataManager` class serves as the central component for loading and accessing test data from different sources:
+
+- **Supports multiple file formats**: YAML, JSON, and CSV
+- **Environment-specific data**: Loads data from environment-specific directories (e.g., qa, prod)
+- **Caching mechanism**: Improves performance by caching loaded data
+- **Path-based value access**: Retrieves nested values using dot notation (e.g., "users.admin.username")
+
+```java
+public class TestDataManager {
+    private final String environment;
+    
+    // Constructor accepts environment name (qa, prod, etc.)
+    public TestDataManager(String environment) {
+        this.environment = environment;
+        // Initialize data mappers
+    }
+    
+    // Load data from YAML files
+    public Map<String, Object> loadYamlData(String fileName) { /* implementation */ }
+    
+    // Load data from JSON files
+    public Map<String, Object> loadJsonData(String fileName) { /* implementation */ }
+    
+    // Load data from CSV files
+    public Map<String, Object> loadCsvData(String fileName) { /* implementation */ }
+    
+    // Retrieve value by path (e.g., "users.admin.username")
+    public Object getValue(Map<String, Object> data, String path) { /* implementation */ }
+}
+```
+
+#### TestDataGenerator
+
+The `TestDataGenerator` class provides utility methods for generating dynamic test data:
+
+- **Email generation**: Creates random email addresses
+- **Password generation**: Creates secure passwords with configurable complexity
+- **Phone number generation**: Generates formatted phone numbers
+- **Address generation**: Creates realistic address strings
+- **Other dynamic data**: Dates, IDs, and other common test data needs
+
+```java
+public class TestDataGenerator {
+    // Generate random email addresses
+    public static String generateEmail() { /* implementation */ }
+    
+    // Generate secure passwords
+    public static String generatePassword(int length, boolean includeSpecialChars) { /* implementation */ }
+    
+    // Generate formatted phone numbers
+    public static String generatePhoneNumber() { /* implementation */ }
+    
+    // Generate realistic addresses
+    public static String generateAddress() { /* implementation */ }
+}
+```
+
+### Data Files
+
+The framework includes example data files in the `src/test/resources/data/` directory:
+
+#### 1. YAML Data (test-data.yaml)
 
 ```yaml
-# src/test/resources/data/test-data.yaml
 users:
   admin:
     username: admin@example.com
@@ -339,23 +414,28 @@ products:
   laptop:
     name: "Premium Laptop"
     price: 1299.99
-    category: "Electronics"
+    specs:
+      processor: "Intel i7"
+      ram: "16GB"
+      storage: "512GB SSD"
   phone:
     name: "Smart Phone"
     price: 699.99
-    category: "Electronics"
+    specs:
+      processor: "A15"
+      ram: "8GB"
+      storage: "256GB"
 ```
 
-### 2. JSON Data Files
-
-Support for JSON data files for complex data structures:
+#### 2. JSON Data (orders.json)
 
 ```json
-// src/test/resources/data/orders.json
 {
   "orders": [
     {
       "id": "ORD-001",
+      "total": 1299.99,
+      "status": "PENDING",
       "customer": {
         "name": "John Doe",
         "email": "john@example.com"
@@ -363,7 +443,7 @@ Support for JSON data files for complex data structures:
       "items": [
         {
           "productId": "PROD-001",
-          "quantity": 2
+          "quantity": 1
         }
       ]
     }
@@ -371,119 +451,133 @@ Support for JSON data files for complex data structures:
 }
 ```
 
-### 3. CSV Data Files
-
-Support for CSV files for tabular data:
+#### 3. CSV Data (products.csv)
 
 ```csv
-# src/test/resources/data/products.csv
-id,name,price,category
-PROD-001,Premium Laptop,1299.99,Electronics
-PROD-002,Smart Phone,699.99,Electronics
-PROD-003,Wireless Headphones,199.99,Accessories
+id,name,price,category,stock,rating
+PROD-001,Premium Laptop,1299.99,Electronics,50,4.8
+PROD-002,Smart Phone,699.99,Electronics,100,4.6
+PROD-003,Wireless Headphones,199.99,Accessories,75,4.5
 ```
 
-### 4. Data Provider Methods
+### Data Management Tests (TestDataDemoTest)
 
-TestNG data providers for dynamic test data:
+The `TestDataDemoTest` class demonstrates how to use the data management capabilities of the framework:
 
+#### 1. YAML Data Loading
+
+Demonstrates loading and parsing YAML data:
 ```java
-@DataProvider(name = "userCredentials")
-public Object[][] getUserCredentials() {
-    return new Object[][] {
-        {"admin@example.com", "admin123", "ADMIN"},
-        {"user@example.com", "user123", "USER"}
-    };
-}
-
-@Test(dataProvider = "userCredentials")
-public void testLogin(String username, String password, String role) {
-    // Test implementation
-}
-```
-
-### 5. Environment-Specific Data
-
-Support for environment-specific test data:
-
-```yaml
-# src/test/resources/data/qa/test-data.yaml
-environment: qa
-users:
-  admin:
-    username: qa-admin@example.com
-    password: qa-admin123
-
-# src/test/resources/data/prod/test-data.yaml
-environment: prod
-users:
-  admin:
-    username: prod-admin@example.com
-    password: prod-admin123
-```
-
-### 6. Dynamic Data Generation
-
-Support for generating test data dynamically:
-
-```java
-public class TestDataGenerator {
-    public static User generateUser() {
-        return User.builder()
-            .username("user" + System.currentTimeMillis() + "@example.com")
-            .password(generateRandomPassword())
-            .role("USER")
-            .build();
-    }
-}
-```
-
-### 7. Data Validation
-
-Built-in data validation capabilities:
-
-```java
-@Test
-public void testDataValidation() {
-    User user = TestDataGenerator.generateUser();
+@Test(description = "Demonstrate YAML data loading")
+public void testYamlDataLoading() {
+    Map<String, Object> data = dataManager.loadYamlData("test-data.yaml");
     
-    assertThat(user)
-        .hasValidEmail()
-        .hasValidPassword()
-        .hasValidRole();
+    // Get user data using dot notation
+    String adminUsername = (String) dataManager.getValue(data, "users.admin.username");
+    String adminRole = (String) dataManager.getValue(data, "users.admin.role");
+    
+    // Get product data
+    String laptopName = (String) dataManager.getValue(data, "products.laptop.name");
+    double laptopPrice = (double) dataManager.getValue(data, "products.laptop.price");
+    
+    // Assertions verify data is loaded correctly
+    assertThat(adminUsername).isEqualTo("admin@example.com");
+    assertThat(laptopName).isEqualTo("Premium Laptop");
 }
 ```
 
-### 8. Data Cleanup
+#### 2. JSON Data Loading
 
-Automatic cleanup of test data:
-
+Demonstrates loading and parsing JSON data:
 ```java
-@AfterMethod
-public void cleanupTestData() {
-    // Cleanup implementation
+@Test(description = "Demonstrate JSON data loading")
+public void testJsonDataLoading() {
+    Map<String, Object> data = dataManager.loadJsonData("orders.json");
+    
+    // Access nested JSON objects and arrays
+    Map<String, Object> firstOrder = (Map<String, Object>) ((List<?>) data.get("orders")).get(0);
+    String orderId = (String) firstOrder.get("id");
+    
+    // Access customer data from nested object
+    Map<String, Object> customer = (Map<String, Object>) firstOrder.get("customer");
+    String customerName = (String) customer.get("name");
+    
+    // Verify JSON data
+    assertThat(orderId).isEqualTo("ORD-001");
+    assertThat(customerName).isEqualTo("John Doe");
 }
 ```
 
-### Example Usage
+#### 3. CSV Data Loading
 
+Demonstrates loading and parsing CSV data:
 ```java
-public class UserTest extends BaseTest {
-    private final TestDataManager dataManager;
+@Test(description = "Demonstrate CSV data loading")
+public void testCsvDataLoading() {
+    Map<String, Object> data = dataManager.loadCsvData("products.csv");
     
-    public UserTest() {
-        this.dataManager = new TestDataManager("test-data.yaml");
-    }
+    // Get first row from CSV data
+    Map<String, Object> firstProduct = (Map<String, Object>) ((List<?>) data.get("data")).get(0);
+    String productId = (String) firstProduct.get("id");
+    String productName = (String) firstProduct.get("name");
     
-    @Test
-    public void testUserLogin() {
-        User user = dataManager.getUser("admin");
-        LoginPage loginPage = new LoginPage(getCurrentPage().get());
-        
-        loginPage.login(user.getUsername(), user.getPassword());
-        assertThat(loginPage.isLoggedIn()).isTrue();
-    }
+    // Verify CSV data
+    assertThat(productId).isEqualTo("PROD-001");
+    assertThat(productName).isEqualTo("Premium Laptop");
 }
+```
+
+#### 4. Dynamic Data Generation
+
+Demonstrates generating dynamic test data:
+```java
+@Test(description = "Demonstrate dynamic data generation")
+public void testDynamicDataGeneration() {
+    String email = TestDataGenerator.generateEmail();
+    String password = TestDataGenerator.generatePassword(12, true);
+    String phone = TestDataGenerator.generatePhoneNumber();
+    String address = TestDataGenerator.generateAddress();
+    
+    // Verify generated data meets expected patterns
+    assertThat(email).contains("@example.com");
+    assertThat(password).hasSize(12);
+    assertThat(phone).matches("\\+1\\d{10}");
+}
+```
+
+#### 5. Environment-Specific Data
+
+Demonstrates loading environment-specific data:
+```java
+@Test(description = "Demonstrate environment-specific data")
+public void testEnvironmentSpecificData() {
+    TestDataManager prodDataManager = new TestDataManager("prod");
+    
+    // Compare data between environments
+    Map<String, Object> qaData = dataManager.loadYamlData("test-data.yaml");
+    Map<String, Object> prodData = prodDataManager.loadYamlData("test-data.yaml");
+    
+    // Access equivalent data points from different environments
+    String qaAdminUsername = (String) dataManager.getValue(qaData, "users.admin.username");
+    String prodAdminUsername = (String) dataManager.getValue(prodData, "users.admin.username");
+    
+    // Verify environment-specific values
+    assertThat(qaAdminUsername).isNotEqualTo(prodAdminUsername);
+}
+```
+
+### Running Data Management Tests
+
+To run the data management demonstration tests:
+```bash
+mvn test -Dtest=TestDataDemoTest
+```
+
+To run a specific test method:
+```bash
+mvn test -Dtest=TestDataDemoTest#testYamlDataLoading
+mvn test -Dtest=TestDataDemoTest#testJsonDataLoading
+mvn test -Dtest=TestDataDemoTest#testCsvDataLoading
 ```
 
 ## Included Test Examples
