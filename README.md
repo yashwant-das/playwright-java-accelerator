@@ -1,6 +1,8 @@
 # Playwright Java Accelerator
 
 [![Playwright Tests](https://github.com/yashwant-das/playwright-java-accelerator/actions/workflows/playwright.yml/badge.svg)](https://github.com/yashwant-das/playwright-java-accelerator/actions/workflows/playwright.yml)
+[![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://www.oracle.com/java/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.md)
 
 ![banner](https://github.com/user-attachments/assets/dd8a014a-8002-4568-a512-b0f818905b8e)
 
