@@ -136,8 +136,8 @@
                     </argLine>
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
-                        <allure.link.issue.pattern>https://github.com/mypixelquest/playwright-java-accelerator/issues/{}</allure.link.issue.pattern>
-                        <allure.link.tms.pattern>https://github.com/mypixelquest/playwright-java-accelerator/issues/{}</allure.link.tms.pattern>
+                        <allure.link.issue.pattern>https://github.com/yashwant-das/playwright-java-accelerator/issues/{}</allure.link.issue.pattern>
+                        <allure.link.tms.pattern>https://github.com/yashwant-das/playwright-java-accelerator/issues/{}</allure.link.tms.pattern>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

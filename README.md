@@ -1,6 +1,6 @@
 # Playwright Java Accelerator
 
-[![Playwright Tests](https://github.com/mypixelquest/playwright-java-accelerator/actions/workflows/playwright.yml/badge.svg)](https://github.com/mypixelquest/playwright-java-accelerator/actions/workflows/playwright.yml)
+[![Playwright Tests](https://github.com/yashwant-das/playwright-java-accelerator/actions/workflows/playwright.yml/badge.svg)](https://github.com/yashwant-das/playwright-java-accelerator/actions/workflows/playwright.yml)
 
 ![banner](https://github.com/user-attachments/assets/dd8a014a-8002-4568-a512-b0f818905b8e)
 
@@ -96,7 +96,7 @@ src/
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/mypixelquest/playwright-java-accelerator.git
+   git clone https://github.com/yashwant-das/playwright-java-accelerator.git
    cd playwright-java-accelerator
    ```
 
@@ -151,7 +151,7 @@ This will generate and open the Allure report in your default browser.
 #### CI/CD Test Results
 The test results are automatically published to GitHub Pages after each CI/CD run. You can view them at:
 ```
-https://mypixelquest.github.io/playwright-java-accelerator/
+https://yashwant-das.github.io/playwright-java-accelerator/
 ```
 
 The report includes:
