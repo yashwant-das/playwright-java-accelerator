@@ -45,46 +45,46 @@ src/
       io/
         github/
           mypixelquest/
-            pja/                      # Main source code (if applicable)
+            pja/                         # Main source code (if applicable)
   test/
     java/
       io/
         github/
           mypixelquest/
             pja/
-              base/                   # Base test classes & Playwright setup
-                BaseTest.java         # Core test setup & teardown
-              config/                 # Configuration models
-                ConfigModel.java      # YAML configuration POJO
-                TestConfig.java       # Configuration access singleton
-              data/                   # Test data management
-                TestDataManager.java  # Data loading from various formats
-                TestDataGenerator.java # Dynamic test data generation
-              listeners/              # TestNG & Allure listeners
+              base/                      # Base test classes & Playwright setup
+                BaseTest.java            # Core test setup & teardown
+              config/                    # Configuration models
+                ConfigModel.java         # YAML configuration POJO
+                TestConfig.java          # Configuration access singleton
+              data/                      # Test data management
+                TestDataManager.java     # Data loading from various formats
+                TestDataGenerator.java   # Dynamic test data generation
+              listeners/                 # TestNG & Allure listeners
                 ScreenshotListener.java  # Auto-screenshot on failure
-                RetryAnalyzer.java    # Test retry mechanism
-              pages/                  # Page Object Model classes
-                BasePage.java         # Base page object functionality
-                ExamplePage.java      # Example page implementation
-              tests/                  # TestNG test classes
-                ExampleTest.java      # Example test implementation
-                TestDataDemoTest.java # Data management demonstration tests
-              utils/                  # Helper utilities
-                ConfigReader.java     # Configuration loader
-                WebDriverManager.java # WebDriver singleton for Selenium
+                RetryAnalyzer.java       # Test retry mechanism
+              pages/                     # Page Object Model classes
+                BasePage.java            # Base page object functionality
+                ExamplePage.java         # Example page implementation
+              tests/                     # TestNG test classes
+                ExampleTest.java         # Example test implementation
+                TestDataDemoTest.java    # Data management demonstration tests
+              utils/                     # Helper utilities
+                ConfigReader.java        # Configuration loader
+                WebDriverManager.java    # WebDriver singleton for Selenium
     resources/
-      config/                         # Configuration files
-        qa.yaml                       # QA environment config
-      data/                           # Test data files
-        orders.json                   # Example JSON test data
-        products.csv                  # Example CSV test data
-        test-data.yaml               # Example YAML test data
-        qa/                           # Environment-specific data (QA)
-        prod/                         # Environment-specific data (Production)
-      logback.xml                     # Logging configuration
-      suites/                         # TestNG XML suite files
-        example-suite.xml             # Example-specific test suite
-        testng.xml                    # Main test suite
+      config/                            # Configuration files
+        qa.yaml                          # QA environment config
+      data/                              # Test data files
+        orders.json                      # Example JSON test data
+        products.csv                     # Example CSV test data
+        test-data.yaml                   # Example YAML test data
+        qa/                              # Environment-specific data (QA)
+        prod/                            # Environment-specific data (Production)
+      logback.xml                        # Logging configuration
+      suites/                            # TestNG XML suite files
+        example-suite.xml                # Example-specific test suite
+        testng.xml                       # Main test suite
 ```
 
 ## Prerequisites
