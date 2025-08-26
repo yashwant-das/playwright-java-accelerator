@@ -152,9 +152,7 @@ This will generate and open the Allure report in your default browser.
 
 #### CI/CD Test Results
 The test results are automatically published to GitHub Pages after each CI/CD run. You can view them at:
-```
-https://yashwant-das.github.io/playwright-java-accelerator/
-```
+[https://yashwant-das.github.io/playwright-java-accelerator/](https://yashwant-das.github.io/playwright-java-accelerator/)
 
 The report includes:
 - Test execution history
@@ -163,6 +161,8 @@ The report includes:
 - Test duration and status
 - Environment information
 - Test categories and tags
+
+<img width="4010" height="2486" alt="report" src="https://github.com/user-attachments/assets/d961dfca-f3e5-4bdc-8372-269e5ac1ff32" />
 
 ## Continuous Integration/Deployment
 
