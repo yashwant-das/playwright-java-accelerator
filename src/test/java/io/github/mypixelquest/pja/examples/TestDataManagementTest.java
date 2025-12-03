@@ -106,7 +106,7 @@ public class TestDataManagementTest {
         int viewportWidth = Integer.parseInt((String) firstBrowser.get("viewport_width"));
         int viewportHeight = Integer.parseInt((String) firstBrowser.get("viewport_height"));
 
-        log.info("Test Data (CSV): Browser {} - {} (Type: {}, Version: {}, Headless: {}, Viewport: {}x{})", 
+        log.info("Test Data (CSV): Browser {} - {} (Type: {}, Version: {}, Headless: {}, Viewport: {}x{})",
                 browserId, browserName, browserType, version, headless, viewportWidth, viewportHeight);
         assertThat(browserId).isEqualTo("BROWSER-001");
         assertThat(browserName).isEqualTo("Chromium");

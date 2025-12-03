@@ -22,14 +22,14 @@ public class WaitStrategiesTest extends PlaywrightTest {
     @Story("Wait Strategies")
     public void testAutoWaitForVisibility() {
         log.info("Testing auto-wait for element visibility");
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://playwright.dev");
-            
+
             // Playwright automatically waits for element to be visible
             var getStartedLink = page.locator("a.getStarted_Sjon");
             assertThat(getStartedLink.isVisible()).isTrue();
-            
+
             log.info("Element found and visible after auto-wait");
         });
     }
@@ -40,13 +40,13 @@ public class WaitStrategiesTest extends PlaywrightTest {
     @Story("Wait Strategies")
     public void testExplicitWaitForNavigation() {
         log.info("Testing explicit wait for navigation");
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://playwright.dev");
-            
+
             // Wait for navigation to complete
             page.waitForLoadState();
-            
+
             assertThat(page.url()).contains("playwright.dev");
             log.info("Navigation completed");
         });
@@ -58,14 +58,14 @@ public class WaitStrategiesTest extends PlaywrightTest {
     @Story("Wait Strategies")
     public void testWaitForSelectorState() {
         log.info("Testing wait for selector state");
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://playwright.dev");
-            
+
             // Wait for element to be attached and visible
             var navbar = page.locator("nav.navbar");
             navbar.waitFor();
-            
+
             assertThat(navbar.isVisible()).isTrue();
             log.info("Selector state verified");
         });
@@ -77,17 +77,17 @@ public class WaitStrategiesTest extends PlaywrightTest {
     @Story("Wait Strategies")
     public void testCustomTimeout() {
         log.info("Testing custom timeout configuration");
-        
+
         getCurrentPage().ifPresent(page -> {
-            // Set custom timeout for this page
+            // Set a custom timeout for this page
             page.setDefaultTimeout(10000);
-            
+
             page.navigate("https://playwright.dev");
-            
+
             // This will use the custom timeout
             var element = page.locator("nav.navbar");
             element.waitFor();
-            
+
             assertThat(element.isVisible()).isTrue();
             log.info("Custom timeout applied successfully");
         });

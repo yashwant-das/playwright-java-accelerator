@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BasePage {
     protected final Page page;
     protected final Logger log;
-    
+
     /**
      * Constructor for BasePage
      *
@@ -22,7 +22,7 @@ public abstract class BasePage {
         this.log = LoggerFactory.getLogger(getClass());
         log.debug("Initializing {}", getClass().getSimpleName());
     }
-    
+
     /**
      * Get the page title
      *
@@ -34,7 +34,7 @@ public abstract class BasePage {
         log.debug("Page title: {}", title);
         return title;
     }
-    
+
     /**
      * Get the current URL
      *
@@ -46,7 +46,7 @@ public abstract class BasePage {
         log.debug("Current URL: {}", url);
         return url;
     }
-    
+
     /**
      * Wait for page load state to be complete
      *

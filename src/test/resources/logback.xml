@@ -22,13 +22,13 @@
     </appender>
 
     <!-- Loggers -->
-    <logger name="io.github.mypixelquest.pja" level="DEBUG" />
-    <logger name="org.testng" level="INFO" />
-    <logger name="com.microsoft.playwright" level="INFO" />
+    <logger name="io.github.mypixelquest.pja" level="DEBUG"/>
+    <logger name="org.testng" level="INFO"/>
+    <logger name="com.microsoft.playwright" level="INFO"/>
 
     <!-- Root Logger -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>

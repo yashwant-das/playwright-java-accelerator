@@ -23,14 +23,14 @@ public class MultiBrowserTest extends PlaywrightTest {
     @Story("Multi-Browser Testing")
     public void testCrossBrowserNavigation() {
         log.info("Running cross-browser test");
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://playwright.dev");
-            
+
             // Verify page loaded correctly regardless of browser
             assertThat(page.title()).contains("Playwright");
             assertThat(page.url()).contains("playwright.dev");
-            
+
             log.info("Test passed on configured browser");
         });
     }
@@ -41,18 +41,18 @@ public class MultiBrowserTest extends PlaywrightTest {
     @Story("Multi-Browser Testing")
     public void testCrossBrowserElementInteraction() {
         log.info("Running cross-browser element interaction test");
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://playwright.dev");
-            
+
             // Interact with elements - should work on all browsers
             var getStartedLink = page.locator("a.getStarted_Sjon");
             assertThat(getStartedLink.isVisible()).isTrue();
-            
+
             // Click and verify navigation
             getStartedLink.click();
             page.waitForLoadState();
-            
+
             assertThat(page.url()).contains("docs");
             log.info("Element interaction successful on configured browser");
         });

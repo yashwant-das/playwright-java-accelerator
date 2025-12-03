@@ -14,99 +14,99 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, windows-latest]
+        os: [ macos-14, windows-latest ]
     
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        java-version: 17
-        distribution: 'temurin'
-        cache: 'maven'
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: 'maven'
 
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2-
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-
 
-    - name: Clean Allure Results (Unix)
-      if: runner.os != 'Windows'
-      run: |
-        rm -rf target/allure-results/*
-        mkdir -p target/allure-results
+      - name: Clean Allure Results (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          rm -rf target/allure-results/*
+          mkdir -p target/allure-results
 
-    - name: Clean Allure Results (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        if (Test-Path target/allure-results) { Remove-Item target/allure-results -Recurse }
-        New-Item -Path target/allure-results -ItemType Directory -Force
+      - name: Clean Allure Results (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          if (Test-Path target/allure-results) { Remove-Item target/allure-results -Recurse }
+          New-Item -Path target/allure-results -ItemType Directory -Force
 
-    - name: Install Playwright browsers (Unix)
-      if: runner.os != 'Windows'
-      run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
+      - name: Install Playwright browsers (Unix)
+        if: runner.os != 'Windows'
+        run: mvn exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
 
-    - name: Install Playwright browsers (Windows)
-      if: runner.os == 'Windows'
-      run: mvn exec:java "-Dexec.mainClass=com.microsoft.playwright.CLI" "-Dexec.args=install"
+      - name: Install Playwright browsers (Windows)
+        if: runner.os == 'Windows'
+        run: mvn exec:java "-Dexec.mainClass=com.microsoft.playwright.CLI" "-Dexec.args=install"
 
-    - name: Run tests
-      run: mvn clean test
+      - name: Run tests
+        run: mvn clean test
 
-    - name: Generate Allure Report
-      if: always()
-      run: |
-        mvn allure:report
+      - name: Generate Allure Report
+        if: always()
+        run: |
+          mvn allure:report
 
-    - name: Verify report files (Unix)
-      if: always() && runner.os != 'Windows'
-      run: |
-        ls -la target/allure-results/
-        ls -la target/site/allure-maven-plugin/
+      - name: Verify report files (Unix)
+        if: always() && runner.os != 'Windows'
+        run: |
+          ls -la target/allure-results/
+          ls -la target/site/allure-maven-plugin/
 
-    - name: Verify report files (Windows)
-      if: always() && runner.os == 'Windows'
-      run: |
-        Get-ChildItem -Path target/allure-results/
-        Get-ChildItem -Path target/site/allure-maven-plugin/
+      - name: Verify report files (Windows)
+        if: always() && runner.os == 'Windows'
+        run: |
+          Get-ChildItem -Path target/allure-results/
+          Get-ChildItem -Path target/site/allure-maven-plugin/
 
-    - name: Create redirect HTML
-      if: always()
-      run: |
-        echo '<!DOCTYPE html>
-        <html>
-        <head>
-            <meta http-equiv="refresh" content="0; url=./allure-maven-plugin/index.html" />
-            <title>Allure Report</title>
-        </head>
-        <body>
-            <p>Redirecting to Allure Report...</p>
-            <p>If you are not redirected automatically, <a href="./allure-maven-plugin/index.html">click here</a>.</p>
-        </body>
-        </html>' > target/site/index.html
+      - name: Create redirect HTML
+        if: always()
+        run: |
+          echo '<!DOCTYPE html>
+          <html>
+          <head>
+              <meta http-equiv="refresh" content="0; url=./allure-maven-plugin/index.html" />
+              <title>Allure Report</title>
+          </head>
+          <body>
+              <p>Redirecting to Allure Report...</p>
+              <p>If you are not redirected automatically, <a href="./allure-maven-plugin/index.html">click here</a>.</p>
+          </body>
+          </html>' > target/site/index.html
 
-    - name: Upload Allure Report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: allure-report-${{ matrix.os }}
-        path: target/site/
-        retention-days: 30
-        compression-level: 6
-        overwrite: true
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-${{ matrix.os }}
+          path: target/site/
+          retention-days: 30
+          compression-level: 6
+          overwrite: true
 
-    - name: Upload Test Screenshots
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-screenshots-${{ matrix.os }}
-        path: target/screenshots/
-        retention-days: 7
-        compression-level: 6
-        overwrite: true
+      - name: Upload Test Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots-${{ matrix.os }}
+          path: target/screenshots/
+          retention-days: 7
+          compression-level: 6
+          overwrite: true
 
   deploy:
     name: Deploy Report
@@ -132,7 +132,7 @@ jobs:
         with:
           name: allure-report-windows-latest
           path: target/site/windows-report
-          
+
       - name: Update index file to include Windows report link
         run: |
           sed -i 's/<\/body>/<p><a href="\.\/windows-report\/allure-maven-plugin\/index.html">View Windows Test Report<\/a><\/p><\/body>/g' target/site/index.html

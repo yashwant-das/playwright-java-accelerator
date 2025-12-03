@@ -30,7 +30,7 @@ public class RetryAnalyzer implements IRetryAnalyzer {
             retryCount++;
             retryCountMap.put(result, retryCount);
             log.info("Retrying test '{}' for the {} time", result.getName(), retryCount);
-            
+
             // Wait between retries if configured
             if (retryConfig.getDelayBetweenRetries() > 0) {
                 try {
@@ -40,10 +40,10 @@ public class RetryAnalyzer implements IRetryAnalyzer {
                     log.warn("Retry delay was interrupted", e);
                 }
             }
-            
+
             return true;
         }
-        
+
         // Clean up after max retries reached
         retryCountMap.remove(result);
         return false;

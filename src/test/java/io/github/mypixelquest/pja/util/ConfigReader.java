@@ -17,14 +17,14 @@ public class ConfigReader {
     private static final Logger log = LoggerFactory.getLogger(ConfigReader.class);
     private static ConfigReader instance;
     private ConfigModel config;
-    
+
     private ConfigReader() {
         loadConfig();
     }
-    
+
     /**
      * Get the singleton instance of ConfigReader
-     * 
+     *
      * @return ConfigReader instance
      */
     public static synchronized ConfigReader getInstance() {
@@ -33,21 +33,21 @@ public class ConfigReader {
         }
         return instance;
     }
-    
+
     /**
      * Load configuration from the appropriate YAML file
      */
     private void loadConfig() {
         String environment = System.getProperty("environment", "qa");
         String configFile = String.format("/config/%s.yaml", environment);
-        
+
         log.info("Loading configuration from {}", configFile);
-        
+
         try (InputStream inputStream = getClass().getResourceAsStream(configFile)) {
             if (inputStream == null) {
                 throw new IOException("Configuration file not found: " + configFile);
             }
-            
+
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             config = mapper.readValue(inputStream, ConfigModel.class);
             log.info("Configuration loaded successfully for environment: {}", environment);
@@ -56,41 +56,41 @@ public class ConfigReader {
             throw new RuntimeException("Failed to load configuration", e);
         }
     }
-    
+
     /**
      * Get the loaded configuration
-     * 
+     *
      * @return ConfigModel containing all configuration settings
      */
     public ConfigModel getConfig() {
         return config;
     }
-    
+
     /**
      * Get base URL from configuration
-     * 
+     *
      * @return Base URL string
      */
     public String getBaseUrl() {
         return Optional.ofNullable(config.getEnvironment().getBaseUrl())
                 .orElseThrow(() -> new RuntimeException("Base URL not configured"));
     }
-    
+
     /**
      * Get browser type from configuration
-     * 
+     *
      * @return Browser type string (chromium, firefox, webkit)
      */
     public String getBrowserType() {
         return Optional.ofNullable(config.getBrowser().getType())
                 .orElse("chromium");
     }
-    
+
     /**
      * Check if browser should run in headless mode
      * First checks if headless property is specified on command line,
      * then falls back to configuration file
-     * 
+     *
      * @return True if headless, false otherwise
      */
     public boolean isHeadless() {
@@ -102,29 +102,29 @@ public class ConfigReader {
         }
         return config.getBrowser().isHeadless();
     }
-    
+
     /**
      * Get default timeout for Playwright actions
-     * 
+     *
      * @return Timeout in milliseconds
      */
     public int getTimeout() {
         return config.getBrowser().getTimeout();
     }
-    
+
     /**
      * Check if screenshots should be taken on test failure
-     * 
+     *
      * @return True if screenshots should be taken on failure, false otherwise
      */
     public boolean shouldTakeScreenshotOnFailure() {
         var screenshotConfig = config.getScreenshot();
         return screenshotConfig != null && screenshotConfig.isTakeOnFailure();
     }
-    
+
     /**
      * Check if full page screenshots should be captured
-     * 
+     *
      * @return True if full page screenshots should be captured, false for viewport only
      */
     public boolean shouldCaptureFullPageScreenshot() {

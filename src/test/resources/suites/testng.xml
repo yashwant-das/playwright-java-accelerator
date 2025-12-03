@@ -16,15 +16,15 @@
 -->
 <suite name="Playwright Java Accelerator Test Suite" verbose="2">
     <listeners>
-        <listener class-name="io.github.mypixelquest.pja.listeners.ScreenshotListener" />
-        <listener class-name="io.github.mypixelquest.pja.listeners.TestConfigurationListener" />
-        <listener class-name="io.github.mypixelquest.pja.listeners.RetryListener" />
+        <listener class-name="io.github.mypixelquest.pja.listeners.ScreenshotListener"/>
+        <listener class-name="io.github.mypixelquest.pja.listeners.TestConfigurationListener"/>
+        <listener class-name="io.github.mypixelquest.pja.listeners.RetryListener"/>
     </listeners>
-    
+
     <!-- Run all example tests demonstrating framework capabilities -->
     <test name="All Example Tests">
         <packages>
-            <package name="io.github.mypixelquest.pja.examples.*" />
+            <package name="io.github.mypixelquest.pja.examples.*"/>
         </packages>
     </test>
 </suite>

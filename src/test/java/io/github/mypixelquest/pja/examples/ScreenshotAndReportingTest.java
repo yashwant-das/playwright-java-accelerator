@@ -23,15 +23,15 @@ public class ScreenshotAndReportingTest extends PlaywrightTest {
     @Attachment(value = "Page Screenshot", type = "image/png")
     public void testSuccessfulScreenshot() {
         log.info("Running test with screenshot capture");
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://playwright.dev");
-            
+
             // Take screenshot manually
             byte[] screenshot = page.screenshot();
-            Allure.addAttachment("Success Screenshot", "image/png", 
-                new java.io.ByteArrayInputStream(screenshot), "png");
-            
+            Allure.addAttachment("Success Screenshot", "image/png",
+                    new java.io.ByteArrayInputStream(screenshot), "png");
+
             assertThat(page.title()).contains("Playwright");
             log.info("Screenshot captured successfully");
         });
@@ -43,7 +43,7 @@ public class ScreenshotAndReportingTest extends PlaywrightTest {
     @Story("Allure Reporting")
     public void testWithSteps() {
         log.info("Running test with step annotations");
-        
+
         getCurrentPage().ifPresent(page -> {
             navigateToPage(page, "https://playwright.dev");
             verifyPageTitle(page, "Playwright");

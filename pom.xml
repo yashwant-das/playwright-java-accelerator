@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,12 +22,11 @@
         <logback.version>1.5.11</logback.version>
         <assertj.version>3.26.3</assertj.version>
         <jackson.version>2.18.0</jackson.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.34</lombok.version>
         <!-- Plugin versions -->
         <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.3.0</maven.surefire.plugin.version>
         <allure.maven.plugin.version>2.13.0</allure.maven.plugin.version>
-        <maven.antrun.plugin.version>3.2.0</maven.antrun.plugin.version>
     </properties>
 
     <dependencies>
@@ -142,8 +141,11 @@
                     </argLine>
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
-                        <allure.link.issue.pattern>https://github.com/yashwant-das/playwright-java-accelerator/issues/{}</allure.link.issue.pattern>
-                        <allure.link.tms.pattern>https://github.com/yashwant-das/playwright-java-accelerator/issues/{}</allure.link.tms.pattern>
+                        <allure.link.issue.pattern>
+                            https://github.com/yashwant-das/playwright-java-accelerator/issues/{}
+                        </allure.link.issue.pattern>
+                        <allure.link.tms.pattern>https://github.com/yashwant-das/playwright-java-accelerator/issues/{}
+                        </allure.link.tms.pattern>
                         <project.build.directory>${project.build.directory}</project.build.directory>
                     </systemPropertyVariables>
                 </configuration>
@@ -159,33 +161,9 @@
                 </configuration>
             </plugin>
 
-            <!-- Playwright Maven Plugin to install browsers -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>${maven.antrun.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>download-playwright-browsers</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <!-- Use exec:java directly instead of calling mvn -->
-                                <java classname="com.microsoft.playwright.CLI" fork="true" failonerror="true">
-                                    <classpath>
-                                        <path refid="maven.compile.classpath" />
-                                        <path refid="maven.plugin.classpath" />
-                                    </classpath>
-                                    <arg value="install" />
-                                </java>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- Exec Maven Plugin for Playwright browser installation -->
+            <!-- Note: Browsers are installed via: mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install" -->
+            <!-- This is handled in CI/CD workflows and can be run manually when needed -->
         </plugins>
     </build>
 </project>

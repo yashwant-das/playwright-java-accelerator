@@ -23,7 +23,7 @@ public class ParallelExecutionTest extends PlaywrightTest {
     @Story("Parallel Execution")
     public void parallelTest1() {
         log.info("Running parallel test 1 on thread: {}", Thread.currentThread().getId());
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://playwright.dev");
             assertThat(page.title()).contains("Playwright");
@@ -37,7 +37,7 @@ public class ParallelExecutionTest extends PlaywrightTest {
     @Story("Parallel Execution")
     public void parallelTest2() {
         log.info("Running parallel test 2 on thread: {}", Thread.currentThread().getId());
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://example.com");
             assertThat(page.title()).contains("Example");
@@ -51,7 +51,7 @@ public class ParallelExecutionTest extends PlaywrightTest {
     @Story("Parallel Execution")
     public void parallelTest3() {
         log.info("Running parallel test 3 on thread: {}", Thread.currentThread().getId());
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://httpbin.org/html");
             assertThat(page.url()).contains("httpbin.org");

@@ -46,9 +46,9 @@ public class PlaywrightTest {
         }
 
         if (browserThreadLocal.get() == null) {
-            log.debug("Creating {} browser for thread: {}", 
+            log.debug("Creating {} browser for thread: {}",
                     configReader.getBrowserType(), Thread.currentThread().getId());
-            
+
             Browser browser;
             BrowserType browserType = getBrowserType(configReader.getBrowserType());
             BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
@@ -67,7 +67,7 @@ public class PlaywrightTest {
         Page page = context.newPage();
         page.setDefaultTimeout(configReader.getTimeout());
         pageThreadLocal.set(page);
-        
+
         // Navigate to the base URL if configured
         try {
             String baseUrl = configReader.getBaseUrl();
@@ -86,12 +86,12 @@ public class PlaywrightTest {
     @AfterMethod(alwaysRun = true)
     public void cleanupBrowserContext() {
         log.info("Cleaning up browser context after test");
-        
+
         if (pageThreadLocal.get() != null) {
             pageThreadLocal.get().close();
             pageThreadLocal.remove();
         }
-        
+
         if (contextThreadLocal.get() != null) {
             contextThreadLocal.get().close();
             contextThreadLocal.remove();
@@ -104,12 +104,12 @@ public class PlaywrightTest {
     @AfterSuite(alwaysRun = true)
     public void cleanupPlaywright() {
         log.info("Cleaning up Playwright resources");
-        
+
         if (browserThreadLocal.get() != null) {
             browserThreadLocal.get().close();
             browserThreadLocal.remove();
         }
-        
+
         if (playwrightThreadLocal.get() != null) {
             playwrightThreadLocal.get().close();
             playwrightThreadLocal.remove();
@@ -134,7 +134,7 @@ public class PlaywrightTest {
     public Optional<BrowserContext> getCurrentContext() {
         return Optional.ofNullable(contextThreadLocal.get());
     }
-    
+
     /**
      * Get browser type based on configuration
      *

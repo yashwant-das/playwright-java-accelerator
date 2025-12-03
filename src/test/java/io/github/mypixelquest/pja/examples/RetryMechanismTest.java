@@ -25,16 +25,16 @@ public class RetryMechanismTest extends PlaywrightTest {
     public void testWithRetryCapability() {
         attemptCount++;
         log.info("Test attempt number: {}", attemptCount);
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://playwright.dev");
-            
+
             // Simulate a potentially flaky condition
             // In real scenarios, this might be network timing, element loading, etc.
             var title = page.title();
             assertThat(title).isNotEmpty();
             assertThat(title).contains("Playwright");
-            
+
             log.info("Test passed on attempt: {}", attemptCount);
         });
     }
@@ -45,7 +45,7 @@ public class RetryMechanismTest extends PlaywrightTest {
     @Story("Retry Mechanism")
     public void testWithoutRetry() {
         log.info("Running test that should pass on first attempt");
-        
+
         getCurrentPage().ifPresent(page -> {
             page.navigate("https://example.com");
             assertThat(page.title()).contains("Example");

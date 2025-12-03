@@ -36,7 +36,7 @@ public class TestConfigurationListener implements IAlterSuiteListener {
         suite.getParameters().put("headless", String.valueOf(browser.isHeadless()));
         suite.getParameters().put("environment", environment.getName());
 
-        log.info("Configured suite parameters from YAML - browser: {}, headless: {}, environment: {}", 
+        log.info("Configured suite parameters from YAML - browser: {}, headless: {}, environment: {}",
                 browser.getType(), browser.isHeadless(), environment.getName());
     }
 
@@ -45,7 +45,7 @@ public class TestConfigurationListener implements IAlterSuiteListener {
      */
     private void configureParallelExecution(XmlSuite suite) {
         var testExecution = configReader.getConfig().getTestExecution();
-        
+
         if (testExecution != null && testExecution.isParallel()) {
             log.info("Enabling parallel execution with {} threads", testExecution.getThreadCount());
             suite.setParallel(XmlSuite.ParallelMode.METHODS);

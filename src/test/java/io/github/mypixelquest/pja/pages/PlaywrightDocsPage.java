@@ -71,7 +71,7 @@ public class PlaywrightDocsPage extends BasePage {
 
     /**
      * Navigate to the Playwright documentation home page
-     * 
+     *
      * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Navigate to Playwright documentation")
@@ -82,7 +82,7 @@ public class PlaywrightDocsPage extends BasePage {
 
     /**
      * Click Get Started button
-     * 
+     *
      * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click Get Started button")
@@ -93,7 +93,7 @@ public class PlaywrightDocsPage extends BasePage {
 
     /**
      * Open search dialog and wait for it to be visible
-     * 
+     *
      * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Open search dialog")
@@ -116,7 +116,7 @@ public class PlaywrightDocsPage extends BasePage {
 
     /**
      * Click the language dropdown to show language options
-     * 
+     *
      * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click language dropdown")
@@ -129,7 +129,7 @@ public class PlaywrightDocsPage extends BasePage {
     /**
      * Navigate to language-specific documentation
      * Note: Since we're already on the Java page, this navigates directly via URL
-     * 
+     *
      * @param language The programming language (java, python, javascript, typescript, dotnet)
      * @return PlaywrightDocsPage instance for method chaining
      */
@@ -145,7 +145,7 @@ public class PlaywrightDocsPage extends BasePage {
 
     /**
      * Navigate to a tool page
-     * 
+     *
      * @param tool The tool name (codegen, inspector, trace-viewer)
      * @return PlaywrightDocsPage instance for method chaining
      */
@@ -196,7 +196,7 @@ public class PlaywrightDocsPage extends BasePage {
 
     /**
      * Click on Docs link in the navigation
-     * 
+     *
      * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click Docs link")
@@ -207,7 +207,7 @@ public class PlaywrightDocsPage extends BasePage {
 
     /**
      * Click on API link in the navigation
-     * 
+     *
      * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click API link")
@@ -218,7 +218,7 @@ public class PlaywrightDocsPage extends BasePage {
 
     /**
      * Click on Community link in the navigation
-     * 
+     *
      * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click Community link")
@@ -229,7 +229,7 @@ public class PlaywrightDocsPage extends BasePage {
 
     /**
      * Click on Skip to Content link for accessibility
-     * 
+     *
      * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click Skip to Content link")
