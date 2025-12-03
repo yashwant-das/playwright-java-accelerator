@@ -88,6 +88,8 @@ public class PlaywrightDocsPage extends BasePage {
     @Step("Click Get Started button")
     public PlaywrightDocsPage clickGetStarted() {
         getStartedButton.click();
+        // Wait for navigation to intro page
+        page.waitForURL("**/docs/intro**");
         return this;
     }
 

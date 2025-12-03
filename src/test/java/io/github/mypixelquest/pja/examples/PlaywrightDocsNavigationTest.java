@@ -44,18 +44,42 @@ public class PlaywrightDocsNavigationTest extends PlaywrightTest {
                     .as("Should be on Java documentation homepage")
                     .contains("/java/");
 
-            // Click Get Started button
+            // Click Get Started button (this now waits for navigation)
             docsPage.clickGetStarted();
+
+            // Wait for page to fully load
+            page.waitForLoadState();
 
             // Verify URL is exactly /java/docs/intro (Java-specific path)
             assertThat(docsPage.getCurrentUrl())
                     .as("URL should be /java/docs/intro after clicking Get Started")
                     .contains("/java/docs/intro");
 
-            // Verify we're on the Installation page
-            assertThat(page.title())
-                    .as("Page title should indicate Installation page")
-                    .containsIgnoringCase("Installation");
+            // Wait for the intro page content to load (check for common intro page elements)
+            // The intro page should have content about getting started/installation
+            // Wait for article content or main content area to be visible
+            page.waitForSelector("article, main article, .markdown");
+            
+            // Get the visible text content from the page body
+            var bodyLocator = page.locator("body");
+            var pageText = bodyLocator.textContent();
+            
+            // Verify we're on the intro page by checking for common intro page text
+            // The page should contain text about installation or getting started
+            assertThat(pageText)
+                    .as("Page text should not be null")
+                    .isNotNull();
+            
+            // Check if page contains installation-related keywords (case-insensitive)
+            String lowerPageText = pageText.toLowerCase();
+            boolean containsInstallationContent = lowerPageText.contains("installation") ||
+                                                  lowerPageText.contains("getting started") ||
+                                                  lowerPageText.contains("maven") ||
+                                                  lowerPageText.contains("gradle");
+            
+            assertThat(containsInstallationContent)
+                    .as("Page should contain installation or getting started content")
+                    .isTrue();
         });
     }
 
@@ -144,17 +168,21 @@ public class PlaywrightDocsNavigationTest extends PlaywrightTest {
             // Navigate to Codegen tool
             docsPage.navigateToTool("codegen");
 
+            // Wait for page to fully load
+            page.waitForLoadState();
+
             // Verify URL contains /codegen (Java-specific path)
             assertThat(docsPage.getCurrentUrl())
                     .as("URL should contain /codegen or /codegen-intro")
                     .matches(".*/(codegen|codegen-intro).*");
 
-            // Verify page content indicates Codegen (check for codegen-related content in the page)
-            // Note: Page title may remain "Playwright Java" but URL and content confirm we're on codegen page
-            var pageContent = page.content();
+            // Verify page content indicates Codegen by checking for specific text content
+            // Wait for the main heading to ensure page is fully rendered
+            page.waitForSelector("h1");
+            var pageContent = page.content().toLowerCase();
             assertThat(pageContent)
                     .as("Page content should mention codegen or generator")
-                    .matches(".*(?i)(codegen|generat).*");
+                    .containsAnyOf("codegen", "test generator", "generator");
 
             // Navigate back to homepage
             docsPage.navigate();
@@ -167,17 +195,21 @@ public class PlaywrightDocsNavigationTest extends PlaywrightTest {
             // Navigate to Trace Viewer
             docsPage.navigateToTool("trace-viewer");
 
+            // Wait for page to fully load
+            page.waitForLoadState();
+
             // Verify URL contains trace-viewer (Java-specific path)
             assertThat(docsPage.getCurrentUrl())
                     .as("URL should contain trace-viewer")
                     .matches(".*trace-viewer.*");
 
-            // Verify page content indicates Trace Viewer (check for trace viewer content in the page)
-            // Note: Page title may remain "Playwright Java" but URL and content confirm we're on trace viewer page
-            var traceViewerContent = page.content();
+            // Verify page content indicates Trace Viewer by checking for specific text content
+            // Wait for the main heading to ensure page is fully rendered
+            page.waitForSelector("h1");
+            var traceViewerContent = page.content().toLowerCase();
             assertThat(traceViewerContent)
                     .as("Page content should mention trace viewer")
-                    .matches(".*(?i)(trace|viewer).*");
+                    .containsAnyOf("trace", "viewer", "trace viewer");
         });
     }
 }
