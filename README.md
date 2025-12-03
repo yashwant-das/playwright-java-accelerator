@@ -12,7 +12,7 @@
   </p>
 
   <p>
-    <img src="https://img.shields.io/badge/Chrome-Supported-4285F4?logo=google-chrome&logoColor=white" alt="Chrome"/>
+    <img src="https://img.shields.io/badge/Chromium-Supported-4285F4?logo=google-chrome&logoColor=white" alt="Chromium"/>
     <img src="https://img.shields.io/badge/Firefox-Supported-FF7139?logo=firefox-browser&logoColor=white" alt="Firefox"/>
     <img src="https://img.shields.io/badge/WebKit-Supported-000000?logo=safari&logoColor=white" alt="WebKit"/>
     <img src="https://img.shields.io/badge/Allure-Reports-FF6A00?logo=allure&logoColor=white" alt="Allure"/>
@@ -54,11 +54,11 @@ A robust and maintainable **Java test automation framework** built with **Playwr
 ## Features
 
 - **Page Object Model**: Organized page classes for better maintainability
-- **Cross-Browser Testing**: Support for Chromium, Firefox, and WebKit browsers
+- **Browser Support**: Chromium configured out of the box (default); Firefox and WebKit can be enabled via configuration
 - **Multi-Environment Support**: Built-in support for multiple environments (dev, qa, prod) with easy switching
 - **Headless Mode**: Run tests without opening browser windows
 - **Parallel Execution**: Run tests in parallel with configurable thread count for faster execution
-- **Multiple Report Formats**: HTML reports with screenshots and interactive Allure reports
+- **Rich Reporting**: Interactive Allure reports with screenshots and detailed test execution information
 - **Auto-Waiting**: Playwright's built-in auto-waiting eliminates flaky tests
 - **Logging**: Comprehensive logging with SLF4J and Logback
 - **Configuration Management**: Flexible YAML-based configuration for different environments
@@ -136,11 +136,9 @@ playwright-java-accelerator/
 Before installing the framework, ensure you have:
 
 - **Java 17+** (check with `java -version`)
-- **Maven 3.6+** (check with `maven -version`)
-- **One or more browsers installed**:
-    - Chrome/Chromium
-    - Firefox
-    - Safari (for WebKit)
+- **Maven 3.6+** (check with `mvn -version`)
+- **Chromium browser** (installed automatically by Playwright when you run `mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install"`).
+  - You can optionally configure Firefox or WebKit via the YAML config, but the default setup uses Chromium only.
 
 ### Quick Setup Validation
 
@@ -350,7 +348,7 @@ The framework follows the Page Object Model (POM) design pattern for better main
 All page objects extend `BasePage`, which provides common functionality:
 
 ```java
-public class BasePage {
+public abstract class BasePage {
     protected final Page page;
     
     public BasePage(Page page) {
@@ -358,8 +356,9 @@ public class BasePage {
     }
     
     // Common methods available to all page objects
-    public void waitForLoadState() { /* ... */ }
-    public void takeScreenshot(String name) { /* ... */ }
+    public String getTitle() { /* ... */ }
+    public String getCurrentUrl() { /* ... */ }
+    public BasePage waitForPageLoad() { /* ... */ }
 }
 ```
 
@@ -508,7 +507,7 @@ mvn test -DtestExecution.threadCount=4
 
 ## Reports
 
-The framework generates comprehensive test reports in multiple formats:
+The framework generates comprehensive test reports using Allure:
 
 ### Allure Reports
 
