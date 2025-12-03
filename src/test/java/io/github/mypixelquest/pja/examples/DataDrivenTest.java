@@ -1,7 +1,7 @@
 package io.github.mypixelquest.pja.examples;
 
 import io.github.mypixelquest.pja.core.PlaywrightTest;
-import io.github.mypixelquest.pja.data.TestDataManager;
+import io.github.mypixelquest.pja.testdata.TestDataManager;
 import io.qameta.allure.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +31,10 @@ public class DataDrivenTest extends PlaywrightTest {
     @Description("Loads test data from YAML and uses it in test")
     @Severity(SeverityLevel.NORMAL)
     @Story("Data-Driven Testing")
-    @SuppressWarnings("unchecked")
     public void testWithYamlData() {
         log.info("Running data-driven test with YAML data");
         
-        Map<String, Object> data = dataManager.loadYamlData("test-data.yaml");
+        Map<String, Object> data = dataManager.loadYamlData("playwright-test-data.yaml");
         String adminUsername = (String) dataManager.getValue(data, "users.admin.username");
         String adminRole = (String) dataManager.getValue(data, "users.admin.role");
         
@@ -46,7 +45,7 @@ public class DataDrivenTest extends PlaywrightTest {
             assertThat(page.title()).isNotEmpty();
         });
         
-        assertThat(adminUsername).isEqualTo("admin@example.com");
+        assertThat(adminUsername).isEqualTo("admin@playwright-test.com");
         assertThat(adminRole).isEqualTo("ADMIN");
     }
 
@@ -58,24 +57,24 @@ public class DataDrivenTest extends PlaywrightTest {
     public void testWithJsonData() {
         log.info("Running data-driven test with JSON data");
         
-        Map<String, Object> data = dataManager.loadJsonData("orders.json");
-        List<Map<String, Object>> orders = (List<Map<String, Object>>) data.get("orders");
+        Map<String, Object> data = dataManager.loadJsonData("test-data.json");
+        List<Map<String, Object>> testScenarios = (List<Map<String, Object>>) data.get("testScenarios");
         
-        assertThat(orders).isNotEmpty();
+        assertThat(testScenarios).isNotEmpty();
         
-        Map<String, Object> firstOrder = orders.get(0);
-        String orderId = (String) firstOrder.get("id");
-        double total = (double) firstOrder.get("total");
+        Map<String, Object> firstScenario = testScenarios.get(0);
+        String scenarioId = (String) firstScenario.get("id");
+        String scenarioName = (String) firstScenario.get("name");
         
-        log.info("Testing with order: {} (Total: ${})", orderId, total);
+        log.info("Testing with scenario: {} - {}", scenarioId, scenarioName);
         
         getCurrentPage().ifPresent(page -> {
-            page.navigate("https://playwright.dev");
+            page.navigate("https://playwright.dev/java/");
             assertThat(page.url()).contains("playwright");
         });
         
-        assertThat(orderId).isEqualTo("ORD-001");
-        assertThat(total).isEqualTo(1299.99);
+        assertThat(scenarioId).isEqualTo("SCENARIO-001");
+        assertThat(scenarioName).isEqualTo("User Login Flow");
     }
 
     @Test(description = "Data-driven test using CSV data")
@@ -86,24 +85,28 @@ public class DataDrivenTest extends PlaywrightTest {
     public void testWithCsvData() {
         log.info("Running data-driven test with CSV data");
         
-        Map<String, Object> data = dataManager.loadCsvData("products.csv");
-        List<Map<String, Object>> products = (List<Map<String, Object>>) data.get("data");
+        Map<String, Object> data = dataManager.loadCsvData("test-data.csv");
+        List<Map<String, Object>> browsers = (List<Map<String, Object>>) data.get("data");
         
-        assertThat(products).isNotEmpty();
+        assertThat(browsers).isNotEmpty();
         
-        Map<String, Object> firstProduct = products.get(0);
-        String productId = (String) firstProduct.get("id");
-        String productName = (String) firstProduct.get("name");
+        Map<String, Object> firstBrowser = browsers.get(0);
+        String browserId = (String) firstBrowser.get("id");
+        String browserName = (String) firstBrowser.get("name");
+        String browserType = (String) firstBrowser.get("type");
+        String version = (String) firstBrowser.get("version");
         
-        log.info("Testing with product: {} - {}", productId, productName);
+        log.info("Testing with browser: {} - {} (Type: {}, Version: {})", browserId, browserName, browserType, version);
         
         getCurrentPage().ifPresent(page -> {
-            page.navigate("https://playwright.dev");
+            page.navigate("https://playwright.dev/java/");
             assertThat(page.title()).isNotEmpty();
         });
         
-        assertThat(productId).isEqualTo("PROD-001");
-        assertThat(productName).isEqualTo("Premium Laptop");
+        assertThat(browserId).isEqualTo("BROWSER-001");
+        assertThat(browserName).isEqualTo("Chromium");
+        assertThat(browserType).isEqualTo("Browser");
+        assertThat(version).isEqualTo("1.48.0");
     }
 }
 

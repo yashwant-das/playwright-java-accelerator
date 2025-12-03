@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!--
+    Main TestNG Suite Configuration
+    This suite runs all example tests in the framework.
+    
+    Listeners:
+    - ScreenshotListener: Automatically captures screenshots on test failure
+    - TestConfigurationListener: Configures suite parameters and parallel execution from YAML config
+    - RetryListener: Handles test retry mechanism based on configuration
+    
+    Usage:
+    - Run via Maven: mvn test
+    - Run via IDE: Right-click on this file and select "Run"
+    - Environment can be set via system property: -Denvironment=qa (default: qa)
+-->
 <suite name="Playwright Java Accelerator Test Suite" verbose="2">
     <listeners>
         <listener class-name="io.github.mypixelquest.pja.listeners.ScreenshotListener" />
@@ -7,7 +21,8 @@
         <listener class-name="io.github.mypixelquest.pja.listeners.RetryListener" />
     </listeners>
     
-    <test name="Regression Tests">
+    <!-- Run all example tests demonstrating framework capabilities -->
+    <test name="All Example Tests">
         <packages>
             <package name="io.github.mypixelquest.pja.examples.*" />
         </packages>

@@ -7,7 +7,7 @@ environment:
 
 browser:
   type: chromium              # Browser type: chromium, firefox, or webkit
-  headless: true              # Run browser in headless mode (no GUI)
+  headless: false              # Run browser in headless mode (no GUI)
   slowMo: 0                   # Slow motion delay in milliseconds (0 = no delay)
   timeout: 30000              # Default timeout in milliseconds for Playwright actions
 

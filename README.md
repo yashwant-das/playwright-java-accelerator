@@ -40,12 +40,6 @@ A robust, maintainable, and modern test automation framework using Java 17 and P
 
 ```
 src/
-  main/
-    java/
-      io/
-        github/
-          mypixelquest/
-            pja/                         # Main source code (if applicable)
   test/
     java/
       io/
@@ -53,15 +47,16 @@ src/
           mypixelquest/
             pja/
               core/                     # Core test classes & Playwright setup
-                PlaywrightTest.java      # Core test setup & teardown
+                PlaywrightTest.java      # Base test class with browser setup/teardown
               config/                    # Configuration models
                 ConfigModel.java         # YAML configuration POJO
-              data/                      # Test data management
-                TestDataManager.java     # Data loading from various formats
+              testdata/                  # Test data management utilities
+                TestDataManager.java     # Data loading from YAML/JSON/CSV
                 TestDataGenerator.java   # Dynamic test data generation
               listeners/                 # TestNG & Allure listeners
                 ScreenshotListener.java  # Auto-screenshot on failure
                 RetryAnalyzer.java       # Test retry mechanism
+                RetryListener.java       # Retry listener
                 TestConfigurationListener.java  # Suite configuration & parallel execution
               pages/                     # Page Object Model classes
                 BasePage.java            # Base page object functionality
@@ -80,13 +75,13 @@ src/
                 ConfigReader.java        # Configuration loader
     resources/
       config/                            # Configuration files
+        dev.yaml                         # Development environment config
         qa.yaml                          # QA environment config
+        prod.yaml                        # Production environment config
       data/                              # Test data files
-        orders.json                      # Example JSON test data
-        products.csv                     # Example CSV test data
-        test-data.yaml                   # Example YAML test data
-        qa/                              # Environment-specific data (QA)
-        prod/                            # Environment-specific data (Production)
+        test-data.json                   # Example JSON test data (test scenarios, users, URLs)
+        test-data.csv                    # Example CSV test data (browser configurations)
+        playwright-test-data.yaml        # Example YAML test data (comprehensive test data)
       logback.xml                        # Logging configuration
       suites/                            # TestNG XML suite files
         example-suite.xml                # Example-specific test suite
@@ -405,7 +400,7 @@ public class TestDataGenerator {
 
 The framework includes example data files in the `src/test/resources/data/` directory:
 
-#### 1. YAML Data (test-data.yaml)
+#### 1. YAML Data (playwright-test-data.yaml)
 
 ```yaml
 users:
@@ -435,36 +430,40 @@ products:
       storage: "256GB"
 ```
 
-#### 2. JSON Data (orders.json)
+#### 2. JSON Data (test-data.json)
 
 ```json
 {
-  "orders": [
+  "testScenarios": [
     {
-      "id": "ORD-001",
-      "total": 1299.99,
-      "status": "PENDING",
-      "customer": {
-        "name": "John Doe",
-        "email": "john@example.com"
-      },
-      "items": [
+      "id": "SCENARIO-001",
+      "name": "User Login Flow",
+      "description": "Test user authentication and login process",
+      "steps": [
         {
-          "productId": "PROD-001",
-          "quantity": 1
+          "action": "navigate",
+          "url": "https://playwright.dev/java/",
+          "expected": "Page loads successfully"
         }
       ]
+    }
+  ],
+  "testUsers": [
+    {
+      "id": "USER-001",
+      "username": "testuser@playwright-test.com",
+      "role": "TESTER"
     }
   ]
 }
 ```
 
-#### 3. CSV Data (products.csv)
+#### 3. CSV Data (test-data.csv)
 
 ```csv
-id,name,price,category,stock,rating
-PROD-001,Premium Laptop,1299.99,Electronics,50,4.8
-PROD-002,Smart Phone,699.99,Electronics,100,4.6
+id,name,type,version,headless,viewport_width,viewport_height,status
+BROWSER-001,Chromium,Browser,1.48.0,true,1920,1080,ACTIVE
+BROWSER-002,Firefox,Browser,1.48.0,true,1920,1080,ACTIVE
 PROD-003,Wireless Headphones,199.99,Accessories,75,4.5
 ```
 
@@ -478,7 +477,7 @@ Demonstrates loading and parsing YAML data:
 ```java
 @Test(description = "Demonstrate YAML data loading")
 public void testYamlDataLoading() {
-    Map<String, Object> data = dataManager.loadYamlData("test-data.yaml");
+    Map<String, Object> data = dataManager.loadYamlData("playwright-test-data.yaml");
     
     // Get user data using dot notation
     String adminUsername = (String) dataManager.getValue(data, "users.admin.username");
@@ -500,19 +499,22 @@ Demonstrates loading and parsing JSON data:
 ```java
 @Test(description = "Demonstrate JSON data loading")
 public void testJsonDataLoading() {
-    Map<String, Object> data = dataManager.loadJsonData("orders.json");
+    Map<String, Object> data = dataManager.loadJsonData("test-data.json");
     
     // Access nested JSON objects and arrays
-    Map<String, Object> firstOrder = (Map<String, Object>) ((List<?>) data.get("orders")).get(0);
-    String orderId = (String) firstOrder.get("id");
+    Map<String, Object> firstScenario = (Map<String, Object>) ((List<?>) data.get("testScenarios")).get(0);
+    String scenarioId = (String) firstScenario.get("id");
+    String scenarioName = (String) firstScenario.get("name");
     
-    // Access customer data from nested object
-    Map<String, Object> customer = (Map<String, Object>) firstOrder.get("customer");
-    String customerName = (String) customer.get("name");
+    // Access test steps from nested array
+    List<Map<String, Object>> steps = (List<Map<String, Object>>) firstScenario.get("steps");
+    Map<String, Object> firstStep = steps.get(0);
+    String action = (String) firstStep.get("action");
     
     // Verify JSON data
-    assertThat(orderId).isEqualTo("ORD-001");
-    assertThat(customerName).isEqualTo("John Doe");
+    assertThat(scenarioId).isEqualTo("SCENARIO-001");
+    assertThat(scenarioName).isEqualTo("User Login Flow");
+    assertThat(action).isEqualTo("navigate");
 }
 ```
 
@@ -522,16 +524,18 @@ Demonstrates loading and parsing CSV data:
 ```java
 @Test(description = "Demonstrate CSV data loading")
 public void testCsvDataLoading() {
-    Map<String, Object> data = dataManager.loadCsvData("products.csv");
+    Map<String, Object> data = dataManager.loadCsvData("test-data.csv");
     
     // Get first row from CSV data
-    Map<String, Object> firstProduct = (Map<String, Object>) ((List<?>) data.get("data")).get(0);
-    String productId = (String) firstProduct.get("id");
-    String productName = (String) firstProduct.get("name");
+    Map<String, Object> firstBrowser = (Map<String, Object>) ((List<?>) data.get("data")).get(0);
+    String browserId = (String) firstBrowser.get("id");
+    String browserName = (String) firstBrowser.get("name");
+    String browserType = (String) firstBrowser.get("type");
     
     // Verify CSV data
-    assertThat(productId).isEqualTo("PROD-001");
-    assertThat(productName).isEqualTo("Premium Laptop");
+    assertThat(browserId).isEqualTo("BROWSER-001");
+    assertThat(browserName).isEqualTo("Chromium");
+    assertThat(browserType).isEqualTo("Browser");
 }
 ```
 
@@ -562,8 +566,8 @@ public void testEnvironmentSpecificData() {
     TestDataManager prodDataManager = new TestDataManager("prod");
     
     // Compare data between environments
-    Map<String, Object> qaData = dataManager.loadYamlData("test-data.yaml");
-    Map<String, Object> prodData = prodDataManager.loadYamlData("test-data.yaml");
+    Map<String, Object> qaData = dataManager.loadYamlData("playwright-test-data.yaml");
+    Map<String, Object> prodData = prodDataManager.loadYamlData("playwright-test-data.yaml");
     
     // Access equivalent data points from different environments
     String qaAdminUsername = (String) dataManager.getValue(qaData, "users.admin.username");

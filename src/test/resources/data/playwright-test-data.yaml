@@ -1,0 +1,25 @@
+# Playwright Test Data Configuration
+# This file demonstrates how to structure test data in YAML format
+# Used for testing playwright.dev documentation site
+
+# Test user accounts (example data for demonstration)
+users:
+  admin:
+    username: admin@playwright-test.com
+    password: Test@1234
+    role: ADMIN
+    permissions:
+      - read
+      - write
+      - delete
+      - configure
+
+# Browser configurations for cross-browser testing
+browsers:
+  chromium:
+    name: "Chromium"
+    type: "chromium"
+    headless: true
+    viewport:
+      width: 1920
+      height: 1080

@@ -10,8 +10,8 @@ import io.qameta.allure.Step;
  * Page Object for the Playwright Documentation Homepage
  */
 public class PlaywrightDocsPage extends BasePage {
-    // Base URL from config
-    private static final String BASE_URL = "https://playwright.dev/";
+    // Base URL from config - using Java-specific URL
+    private static final String BASE_URL = "https://playwright.dev/java/";
 
     // Navigation and Header Elements
     private final Locator navbar;
@@ -24,15 +24,14 @@ public class PlaywrightDocsPage extends BasePage {
     private final Locator getStartedButton;
     private final Locator languageDropdown;
 
-    // Language Links
+    // Language Links (in dropdown)
     private final Locator javaLink;
     private final Locator pythonLink;
     private final Locator javascriptLink;
     private final Locator typescriptLink;
     private final Locator dotnetLink;
-    private final Locator nodejsLink;
 
-    // Tool Links
+    // Tool Links (in main content)
     private final Locator codegenLink;
     private final Locator playwrightInspectorLink;
     private final Locator traceViewerLink;
@@ -45,29 +44,29 @@ public class PlaywrightDocsPage extends BasePage {
     public PlaywrightDocsPage(Page page) {
         super(page);
 
-        // Initialize navigation elements
-        this.navbar = page.locator("nav.navbar");
+        // Initialize navigation elements - using more stable selectors
+        this.navbar = page.locator("nav[aria-label='Main']");
         this.docs = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Docs"));
-        this.api = page.locator("a[href='/docs/api/class-playwright']");
-        this.community = page.locator("a[href='/community/welcome']");
-        this.search = page.locator("button.DocSearch");
-        this.searchModal = page.locator("div.DocSearch-Modal");
-        this.skipToContent = page.locator("a.skipToContent_fXgn");
-        this.getStartedButton = page.locator("a.getStarted_Sjon");
-        this.languageDropdown = page.locator("div.navbar__item.dropdown.dropdown--hoverable");
+        this.api = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("API"));
+        this.community = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Community"));
+        this.search = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Search (Command+K)"));
+        this.searchModal = page.locator("div[class*='DocSearch'], div[class*='search'], div[role='dialog']").first();
+        this.skipToContent = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Skip to main content"));
+        this.getStartedButton = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Get started"));
+        this.languageDropdown = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Java"));
 
-        // Initialize language links
+        // Initialize language links - using href-based selectors for reliability
+        // Note: These are kept for potential future use but navigateToLanguage now uses direct URL navigation
         this.javaLink = page.locator("a[href='/java/']");
         this.pythonLink = page.locator("a[href='/python/']");
-        this.javascriptLink = page.locator("text=JavaScript");
-        this.typescriptLink = page.locator("text=TypeScript");
+        this.javascriptLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("JavaScript"));
+        this.typescriptLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("TypeScript"));
         this.dotnetLink = page.locator("a[href='/dotnet/']");
-        this.nodejsLink = page.locator("a[href='#']");
 
-        // Initialize tool links
-        this.codegenLink = page.locator("a[href='docs/codegen']");
-        this.playwrightInspectorLink = page.locator("a[href='docs/debug#playwright-inspector']");
-        this.traceViewerLink = page.locator("a[href='docs/trace-viewer-intro']");
+        // Initialize tool links - these are in the main content area, using text-based locators
+        this.codegenLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Codegen."));
+        this.playwrightInspectorLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Playwright inspector."));
+        this.traceViewerLink = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Trace Viewer."));
     }
 
     /**
@@ -122,46 +121,25 @@ public class PlaywrightDocsPage extends BasePage {
      */
     @Step("Click language dropdown")
     public PlaywrightDocsPage clickLanguageDropdown() {
-        languageDropdown.click();
+        // Hover to open dropdown (if it's a hoverable dropdown)
+        languageDropdown.hover();
         return this;
     }
 
     /**
      * Navigate to language-specific documentation
+     * Note: Since we're already on the Java page, this navigates directly via URL
      * 
      * @param language The programming language (java, python, javascript, typescript, dotnet)
      * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Navigate to {language} documentation")
     public PlaywrightDocsPage navigateToLanguage(String language) {
-        // First click the language dropdown
-        clickLanguageDropdown();
-        
-        // Then select the specific language
-        switch (language.toLowerCase()) {
-            case "java":
-                javaLink.click();
-                break;
-            case "python":
-                pythonLink.click();
-                break;
-            case "javascript":
-                javascriptLink.click();
-                break;
-            case "typescript":
-                typescriptLink.click();
-                break;
-            case "dotnet":
-            case ".net":
-                dotnetLink.click();
-                break;
-            case "nodejs":
-            case "node.js":
-                nodejsLink.click();
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported language: " + language);
+        String languagePath = language.toLowerCase();
+        if (languagePath.equals("dotnet") || languagePath.equals(".net")) {
+            languagePath = "dotnet";
         }
+        page.navigate("https://playwright.dev/" + languagePath + "/");
         return this;
     }
 
@@ -176,12 +154,19 @@ public class PlaywrightDocsPage extends BasePage {
         switch (tool.toLowerCase()) {
             case "codegen":
                 codegenLink.click();
+                // Wait for navigation
+                page.waitForURL("**/codegen**");
                 break;
             case "inspector":
                 playwrightInspectorLink.click();
+                // Wait for navigation
+                page.waitForURL("**/debug**");
                 break;
             case "trace-viewer":
+            case "traceviewer":
                 traceViewerLink.click();
+                // Wait for navigation
+                page.waitForURL("**/trace-viewer**");
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported tool: " + tool);

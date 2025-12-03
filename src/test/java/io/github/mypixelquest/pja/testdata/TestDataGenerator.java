@@ -1,4 +1,4 @@
-package io.github.mypixelquest.pja.data;
+package io.github.mypixelquest.pja.testdata;
 
 import java.util.Random;
 import java.util.UUID;
@@ -118,4 +118,5 @@ public class TestDataGenerator {
             generateString(10),
             generateNumber(10000, 99999));
     }
-} 
+}
+

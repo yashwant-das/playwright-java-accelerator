@@ -1,4 +1,4 @@
-package io.github.mypixelquest.pja.data;
+package io.github.mypixelquest.pja.testdata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -199,3 +199,4 @@ public class TestDataManager {
         dataCache.clear();
     }
 }
+

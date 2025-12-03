@@ -1,0 +1,26 @@
+{
+  "testScenarios": [
+    {
+      "id": "SCENARIO-001",
+      "name": "User Login Flow",
+      "description": "Test user authentication and login process",
+      "steps": [
+        {
+          "action": "navigate",
+          "url": "https://playwright.dev/java/",
+          "expected": "Page loads successfully"
+        },
+        {
+          "action": "click",
+          "selector": "Get started",
+          "expected": "Navigation to intro page"
+        },
+        {
+          "action": "verify",
+          "selector": "h1",
+          "expected": "Installation"
+        }
+      ]
+    }
+  ]
+}

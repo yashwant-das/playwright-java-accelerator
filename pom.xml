@@ -15,16 +15,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Dependency versions -->
         <playwright.version>1.48.0</playwright.version>
-        <testng.version>7.9.1</testng.version>
+        <testng.version>7.9.0</testng.version>
         <allure.version>2.27.0</allure.version>
         <aspectj.version>1.9.22</aspectj.version>
         <slf4j.version>2.0.13</slf4j.version>
         <logback.version>1.5.11</logback.version>
         <assertj.version>3.26.3</assertj.version>
         <jackson.version>2.18.0</jackson.version>
-        <lombok.version>1.18.34</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <!-- Plugin versions -->
-        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.3.0</maven.surefire.plugin.version>
         <allure.maven.plugin.version>2.13.0</allure.maven.plugin.version>
         <maven.antrun.plugin.version>3.2.0</maven.antrun.plugin.version>

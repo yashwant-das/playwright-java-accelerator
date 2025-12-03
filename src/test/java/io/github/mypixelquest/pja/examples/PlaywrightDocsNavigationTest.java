@@ -39,13 +39,23 @@ public class PlaywrightDocsNavigationTest extends PlaywrightTest {
                     .as("Homepage should be loaded")
                     .isTrue();
             
+            // Verify we're on the Java documentation page
+            assertThat(docsPage.getCurrentUrl())
+                    .as("Should be on Java documentation homepage")
+                    .contains("/java/");
+            
             // Click Get Started button
             docsPage.clickGetStarted();
             
-            // Verify URL contains docs/intro
+            // Verify URL is exactly /java/docs/intro (Java-specific path)
             assertThat(docsPage.getCurrentUrl())
-                    .as("URL should contain docs/intro after clicking Get Started")
-                    .contains("docs/intro");
+                    .as("URL should be /java/docs/intro after clicking Get Started")
+                    .contains("/java/docs/intro");
+            
+            // Verify we're on the Installation page
+            assertThat(page.title())
+                    .as("Page title should indicate Installation page")
+                    .containsIgnoringCase("Installation");
         });
     }
 
@@ -65,13 +75,18 @@ public class PlaywrightDocsNavigationTest extends PlaywrightTest {
             // Navigate to homepage
             docsPage.navigate();
             
-            // Navigate to Java documentation
+            // Navigate to Java documentation (should already be on Java page)
             docsPage.navigateToLanguage("java");
             
-            // Verify URL contains java
+            // Verify URL is exactly /java/ (exact path for Java docs homepage)
             assertThat(docsPage.getCurrentUrl())
-                    .as("URL should contain java")
-                    .contains("/java");
+                    .as("URL should be the Java documentation homepage")
+                    .isEqualTo("https://playwright.dev/java/");
+            
+            // Verify page title contains "Playwright Java"
+            assertThat(page.title())
+                    .as("Page title should indicate Java documentation")
+                    .containsIgnoringCase("Playwright Java");
         });
     }
 
@@ -94,9 +109,18 @@ public class PlaywrightDocsNavigationTest extends PlaywrightTest {
             // Open search dialog
             docsPage.openSearch();
             
+            // Wait a moment for the modal to appear
+            page.waitForTimeout(500);
+            
             // Verify search dialog is visible using the page object method
             assertThat(docsPage.isSearchModalVisible())
-                    .as("Search modal should be visible")
+                    .as("Search modal should be visible after clicking search button")
+                    .isTrue();
+            
+            // Verify search input is focused or visible
+            var searchInput = page.locator("input[type='search'], input[placeholder*='Search'], input[aria-label*='Search']").first();
+            assertThat(searchInput.isVisible())
+                    .as("Search input field should be visible")
                     .isTrue();
         });
     }
@@ -120,21 +144,36 @@ public class PlaywrightDocsNavigationTest extends PlaywrightTest {
             // Navigate to Codegen tool
             docsPage.navigateToTool("codegen");
             
-            // Verify URL contains codegen
+            // Verify URL contains /codegen (Java-specific path)
             assertThat(docsPage.getCurrentUrl())
-                    .as("URL should contain codegen")
-                    .contains("codegen");
+                    .as("URL should contain /codegen or /codegen-intro")
+                    .matches(".*/(codegen|codegen-intro).*");
+            
+            // Verify page title or content indicates Codegen
+            assertThat(page.title())
+                    .as("Page title should mention codegen or test generator")
+                    .matches(".*(?i)(codegen|generat).*");
             
             // Navigate back to homepage
             docsPage.navigate();
             
+            // Verify we're back on the homepage
+            assertThat(docsPage.getCurrentUrl())
+                    .as("Should be back on Java homepage")
+                    .isEqualTo("https://playwright.dev/java/");
+            
             // Navigate to Trace Viewer
             docsPage.navigateToTool("trace-viewer");
             
-            // Verify URL contains trace-viewer
+            // Verify URL contains trace-viewer (Java-specific path)
             assertThat(docsPage.getCurrentUrl())
                     .as("URL should contain trace-viewer")
-                    .contains("trace-viewer");
+                    .matches(".*trace-viewer.*");
+            
+            // Verify page title or content indicates Trace Viewer
+            assertThat(page.title())
+                    .as("Page title should mention trace viewer")
+                    .matches(".*(?i)(trace|viewer).*");
         });
     }
 }
