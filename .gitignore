@@ -13,7 +13,7 @@ target/
 hs_err_pid*
 
 # Logs
-logs/*.log
+logs/
 *.log
 npm-debug.log*
 
@@ -55,10 +55,11 @@ Desktop.ini
 allure-results/
 allure-report/
 test-output/
+target/site/
+target/screenshots/
 
 # Node modules (if using any JS tools)
 node_modules/
 
-# Specific to your project structure
+# Maven generated reports
 surefire-reports/
-requirements.md
