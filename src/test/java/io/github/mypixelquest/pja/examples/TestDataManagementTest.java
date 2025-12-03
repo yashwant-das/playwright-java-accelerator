@@ -1,4 +1,4 @@
-package io.github.mypixelquest.pja.tests;
+package io.github.mypixelquest.pja.examples;
 
 import io.github.mypixelquest.pja.data.TestDataGenerator;
 import io.github.mypixelquest.pja.data.TestDataManager;
@@ -17,10 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Demonstrates the test data management capabilities of the framework
  */
 @Slf4j
-public class TestDataDemoTest {
+public class TestDataManagementTest {
     private final TestDataManager dataManager;
 
-    public TestDataDemoTest() {
+    public TestDataManagementTest() {
         this.dataManager = new TestDataManager("qa");
     }
 
@@ -129,27 +129,5 @@ public class TestDataDemoTest {
         assertThat(phone).matches("\\+1\\d{10}");
         assertThat(address).matches("\\d+ [\\w\\s]+,\\s+[\\w\\s]+ \\d{5}");
     }
-
-    @Test(description = "Demonstrate environment-specific data", enabled = false)
-    @Description("Loads environment-specific test data")
-    @Severity(SeverityLevel.NORMAL)
-    @Story("Test Data Management")
-    public void testEnvironmentSpecificData() {
-        // Create a new data manager for production environment
-        TestDataManager prodDataManager = new TestDataManager("prod");
-        
-        // Load the same data file but from different environment
-        Map<String, Object> qaData = dataManager.loadYamlData("test-data.yaml");
-        Map<String, Object> prodData = prodDataManager.loadYamlData("test-data.yaml");
-
-        // Compare data between environments
-        String qaAdminUsername = (String) dataManager.getValue(qaData, "users.admin.username");
-        String prodAdminUsername = (String) dataManager.getValue(prodData, "users.admin.username");
-
-        log.info("QA Admin: {}", qaAdminUsername);
-        log.info("Prod Admin: {}", prodAdminUsername);
-
-        // In a real scenario, these would be different
-        assertThat(qaAdminUsername).isNotEqualTo(prodAdminUsername);
-    }
 }
+

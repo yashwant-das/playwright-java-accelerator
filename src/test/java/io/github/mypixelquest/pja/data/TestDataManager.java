@@ -8,21 +8,21 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manages test data loading and access from various sources (YAML, JSON, CSV)
+ * Uses classpath resources for reliable resource loading in all environments
  */
 @Slf4j
 public class TestDataManager {
-    private static final String DATA_DIR = "src/test/resources/data";
-    private static final Map<String, Object> dataCache = new HashMap<>();
+    private static final String DATA_BASE_PATH = "/data/";
+    // Thread-safe cache for loaded data
+    private static final Map<String, Object> dataCache = new ConcurrentHashMap<>();
     
     private final ObjectMapper yamlMapper;
     private final ObjectMapper jsonMapper;
@@ -49,18 +49,28 @@ public class TestDataManager {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> loadYamlData(String fileName) {
-        String cacheKey = "yaml:" + fileName;
+        String cacheKey = "yaml:" + environment + ":" + fileName;
         if (dataCache.containsKey(cacheKey)) {
             return (Map<String, Object>) dataCache.get(cacheKey);
         }
         
         try {
-            Path filePath = Paths.get(DATA_DIR, environment, fileName);
-            if (!Files.exists(filePath)) {
-                filePath = Paths.get(DATA_DIR, fileName);
+            // Try environment-specific path first, then fallback to base data directory
+            String resourcePath = DATA_BASE_PATH + environment + "/" + fileName;
+            InputStream inputStream = getClass().getResourceAsStream(resourcePath);
+            
+            if (inputStream == null) {
+                // Fallback to base data directory
+                resourcePath = DATA_BASE_PATH + fileName;
+                inputStream = getClass().getResourceAsStream(resourcePath);
             }
             
-            Map<String, Object> data = yamlMapper.readValue(filePath.toFile(), Map.class);
+            if (inputStream == null) {
+                throw new IOException("Data file not found: " + fileName + " (tried: " + 
+                    DATA_BASE_PATH + environment + "/" + fileName + " and " + resourcePath + ")");
+            }
+            
+            Map<String, Object> data = yamlMapper.readValue(inputStream, Map.class);
             dataCache.put(cacheKey, data);
             return data;
         } catch (IOException e) {
@@ -77,18 +87,28 @@ public class TestDataManager {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> loadJsonData(String fileName) {
-        String cacheKey = "json:" + fileName;
+        String cacheKey = "json:" + environment + ":" + fileName;
         if (dataCache.containsKey(cacheKey)) {
             return (Map<String, Object>) dataCache.get(cacheKey);
         }
         
         try {
-            Path filePath = Paths.get(DATA_DIR, environment, fileName);
-            if (!Files.exists(filePath)) {
-                filePath = Paths.get(DATA_DIR, fileName);
+            // Try environment-specific path first, then fallback to base data directory
+            String resourcePath = DATA_BASE_PATH + environment + "/" + fileName;
+            InputStream inputStream = getClass().getResourceAsStream(resourcePath);
+            
+            if (inputStream == null) {
+                // Fallback to base data directory
+                resourcePath = DATA_BASE_PATH + fileName;
+                inputStream = getClass().getResourceAsStream(resourcePath);
             }
             
-            Map<String, Object> data = jsonMapper.readValue(filePath.toFile(), Map.class);
+            if (inputStream == null) {
+                throw new IOException("Data file not found: " + fileName + " (tried: " + 
+                    DATA_BASE_PATH + environment + "/" + fileName + " and " + resourcePath + ")");
+            }
+            
+            Map<String, Object> data = jsonMapper.readValue(inputStream, Map.class);
             dataCache.put(cacheKey, data);
             return data;
         } catch (IOException e) {
@@ -105,15 +125,25 @@ public class TestDataManager {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> loadCsvData(String fileName) {
-        String cacheKey = "csv:" + fileName;
+        String cacheKey = "csv:" + environment + ":" + fileName;
         if (dataCache.containsKey(cacheKey)) {
             return (Map<String, Object>) dataCache.get(cacheKey);
         }
         
         try {
-            Path filePath = Paths.get(DATA_DIR, environment, fileName);
-            if (!Files.exists(filePath)) {
-                filePath = Paths.get(DATA_DIR, fileName);
+            // Try environment-specific path first, then fallback to base data directory
+            String resourcePath = DATA_BASE_PATH + environment + "/" + fileName;
+            InputStream inputStream = getClass().getResourceAsStream(resourcePath);
+            
+            if (inputStream == null) {
+                // Fallback to base data directory
+                resourcePath = DATA_BASE_PATH + fileName;
+                inputStream = getClass().getResourceAsStream(resourcePath);
+            }
+            
+            if (inputStream == null) {
+                throw new IOException("Data file not found: " + fileName + " (tried: " + 
+                    DATA_BASE_PATH + environment + "/" + fileName + " and " + resourcePath + ")");
             }
             
             // Create schema with headers auto-detected
@@ -123,7 +153,7 @@ public class TestDataManager {
             MappingIterator<Map<String, String>> mappingIterator = 
                 csvMapper.readerFor(Map.class)
                          .with(csvSchema)
-                         .readValues(filePath.toFile());
+                         .readValues(inputStream);
             
             List<Map<String, String>> rows = mappingIterator.readAll();
             

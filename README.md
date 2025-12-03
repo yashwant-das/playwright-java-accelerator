@@ -27,14 +27,14 @@ A robust, maintainable, and modern test automation framework using Java 17 and P
 
 - Java 17
 - Maven 3.6+
-- Playwright 1.42.0
-- TestNG 7.9.0
-- Allure 2.25.0
-- SLF4J 2.0.11
-- Logback 1.4.14
-- AssertJ 3.25.1
-- Jackson 2.16.1
-- Lombok 1.18.30
+- Playwright 1.48.0
+- TestNG 7.9.1
+- Allure 2.27.0
+- SLF4J 2.0.13
+- Logback 1.5.11
+- AssertJ 3.26.3
+- Jackson 2.18.0
+- Lombok 1.18.34
 
 ## Project Structure
 
@@ -52,26 +52,32 @@ src/
         github/
           mypixelquest/
             pja/
-              base/                      # Base test classes & Playwright setup
-                BaseTest.java            # Core test setup & teardown
+              core/                     # Core test classes & Playwright setup
+                PlaywrightTest.java      # Core test setup & teardown
               config/                    # Configuration models
                 ConfigModel.java         # YAML configuration POJO
-                TestConfig.java          # Configuration access singleton
               data/                      # Test data management
                 TestDataManager.java     # Data loading from various formats
                 TestDataGenerator.java   # Dynamic test data generation
               listeners/                 # TestNG & Allure listeners
                 ScreenshotListener.java  # Auto-screenshot on failure
                 RetryAnalyzer.java       # Test retry mechanism
+                TestConfigurationListener.java  # Suite configuration & parallel execution
               pages/                     # Page Object Model classes
                 BasePage.java            # Base page object functionality
-                ExamplePage.java         # Example page implementation
-              tests/                     # TestNG test classes
-                ExampleTest.java         # Example test implementation
-                TestDataDemoTest.java    # Data management demonstration tests
-              utils/                     # Helper utilities
+                PlaywrightDocsPage.java  # Example page implementation
+              examples/                  # Example test classes showcasing framework capabilities
+                PlaywrightDocsNavigationTest.java  # Basic navigation example
+                TestDataManagementTest.java        # Data management demonstration
+                ParallelExecutionTest.java         # Parallel execution demo
+                DataDrivenTest.java                 # Data-driven testing demo
+                ScreenshotAndReportingTest.java    # Screenshot & reporting demo
+                WaitStrategiesTest.java            # Wait strategies demo
+                MultiBrowserTest.java               # Cross-browser testing demo
+                RetryMechanismTest.java             # Retry mechanism demo
+                FormInteractionTest.java            # Form interaction demo
+              util/                      # Helper utilities
                 ConfigReader.java        # Configuration loader
-                WebDriverManager.java    # WebDriver singleton for Selenium
     resources/
       config/                            # Configuration files
         qa.yaml                          # QA environment config
@@ -228,7 +234,7 @@ You can modify logging behavior by editing `logback.xml`:
 Example log output:
 ```
 2025-04-13 00:07:32.290 [main] INFO  i.g.m.pja.utils.ConfigReader - Loading configuration
-2025-04-13 00:07:32.546 [TestNG-1] DEBUG i.g.m.pja.base.BaseTest - Setting up browser
+2025-04-13 00:07:32.546 [TestNG-1] DEBUG i.g.m.pja.core.PlaywrightTest - Setting up browser
 ```
 
 Console output uses a more concise format with highlighted log levels and cyan logger names for better readability.
@@ -332,7 +338,7 @@ To modify parallel execution settings:
 
 ## Test Data Management
 
-The framework provides comprehensive test data management capabilities through multiple approaches. These are implemented through the `TestDataManager` and `TestDataGenerator` classes and demonstrated in the `TestDataDemoTest` class.
+The framework provides comprehensive test data management capabilities through multiple approaches. These are implemented through the `TestDataManager` and `TestDataGenerator` classes and demonstrated in the `TestDataManagementTest` class.
 
 ### Data Management Components
 
@@ -462,9 +468,9 @@ PROD-002,Smart Phone,699.99,Electronics,100,4.6
 PROD-003,Wireless Headphones,199.99,Accessories,75,4.5
 ```
 
-### Data Management Tests (TestDataDemoTest)
+### Data Management Tests (TestDataManagementTest)
 
-The `TestDataDemoTest` class demonstrates how to use the data management capabilities of the framework:
+The `TestDataManagementTest` class demonstrates how to use the data management capabilities of the framework:
 
 #### 1. YAML Data Loading
 
@@ -572,14 +578,14 @@ public void testEnvironmentSpecificData() {
 
 To run the data management demonstration tests:
 ```bash
-mvn test -Dtest=TestDataDemoTest
+mvn test -Dtest=TestDataManagementTest
 ```
 
 To run a specific test method:
 ```bash
-mvn test -Dtest=TestDataDemoTest#testYamlDataLoading
-mvn test -Dtest=TestDataDemoTest#testJsonDataLoading
-mvn test -Dtest=TestDataDemoTest#testCsvDataLoading
+mvn test -Dtest=TestDataManagementTest#testYamlDataLoading
+mvn test -Dtest=TestDataManagementTest#testJsonDataLoading
+mvn test -Dtest=TestDataManagementTest#testCsvDataLoading
 ```
 
 ## Included Test Examples
@@ -588,7 +594,7 @@ The framework includes examples demonstrating how to test the Playwright.dev web
 
 ### Playwright Website Tests
 
-The `ExampleTest` class demonstrates various interactions with the Playwright documentation website:
+The `PlaywrightDocsNavigationTest` class demonstrates various interactions with the Playwright documentation website:
 
 - **Homepage Navigation Test**: Verifies basic navigation and "Get Started" functionality
 - **Java Documentation Test**: Tests navigation to Java-specific documentation
@@ -614,18 +620,42 @@ Or specifically:
 mvn test -DsuiteXmlFile=src/test/resources/suites/example-suite.xml
 ```
 
+### Framework Capabilities Showcase Tests
+
+The framework includes comprehensive showcase tests demonstrating various capabilities:
+
+- **ParallelExecutionTest**: Demonstrates parallel test execution with thread-safe browser handling
+- **DataDrivenTest**: Shows data-driven testing with YAML, JSON, and CSV data sources
+- **ScreenshotAndReportingTest**: Demonstrates screenshot capture and Allure reporting integration
+- **WaitStrategiesTest**: Shows different wait strategies and Playwright's auto-waiting capabilities
+- **MultiBrowserTest**: Demonstrates cross-browser testing (Chromium, Firefox, WebKit)
+- **RetryMechanismTest**: Shows test retry mechanism for handling flaky tests
+- **FormInteractionTest**: Demonstrates form filling, validation, and submission
+
+Run all showcase tests:
+```bash
+mvn test -Dtest=*Test
+```
+
+Run specific showcase test:
+```bash
+mvn test -Dtest=ParallelExecutionTest
+mvn test -Dtest=DataDrivenTest
+mvn test -Dtest=ScreenshotAndReportingTest
+```
+
 ## Creating Tests
 
 ### 1. Create a Page Object
 
 ```java
-public class ExamplePage extends BasePage {
+public class PlaywrightDocsPage extends BasePage {
     // Example implementation showing Playwright locators and methods
     private final Locator getStartedButton;
     private final Locator searchButton;
     private final Locator javaLink;
     
-    public ExamplePage(Page page) {
+    public PlaywrightDocsPage(Page page) {
         super(page);
         this.getStartedButton = page.locator("a.getStarted_Sjon");
         this.searchButton = page.locator("button.DocSearch");
@@ -633,19 +663,19 @@ public class ExamplePage extends BasePage {
     }
     
     @Step("Navigate to homepage")
-    public ExamplePage navigate() {
+    public PlaywrightDocsPage navigate() {
         page.navigate("https://playwright.dev");
         return this;
     }
     
     @Step("Click Get Started button")
-    public ExamplePage clickGetStarted() {
+    public PlaywrightDocsPage clickGetStarted() {
         getStartedButton.click();
         return this;
     }
     
     @Step("Open search dialog")
-    public ExamplePage openSearch() {
+    public PlaywrightDocsPage openSearch() {
         searchButton.click();
         return this;
     }
@@ -657,16 +687,16 @@ public class ExamplePage extends BasePage {
 ```java
 @Epic("Playwright Website Tests")
 @Feature("Basic Website Navigation")
-public class ExampleTest extends BaseTest {
+public class PlaywrightDocsNavigationTest extends PlaywrightTest {
     @Test(description = "Verify homepage navigation")
     @Severity(SeverityLevel.BLOCKER)
     public void testHomePageNavigation() {
         getCurrentPage().ifPresent(page -> {
-            ExamplePage examplePage = new ExamplePage(page);
-            examplePage.navigate()
+            PlaywrightDocsPage docsPage = new PlaywrightDocsPage(page);
+            docsPage.navigate()
                       .clickGetStarted();
                       
-            Assertions.assertThat(examplePage.getCurrentUrl())
+            Assertions.assertThat(docsPage.getCurrentUrl())
                      .contains("docs/intro");
         });
     }

@@ -1,0 +1,26 @@
+# Production Environment Configuration
+# This configuration is optimized for production testing with conservative settings
+
+environment:
+  name: prod                  # Environment identifier
+  baseUrl: https://playwright.dev/  # Base URL for the production application
+
+browser:
+  type: chromium              # Browser type: chromium, firefox, or webkit
+  headless: true              # Always run in headless mode for production
+  slowMo: 0                   # No slow motion for production (fast execution)
+  timeout: 30000              # Default timeout in milliseconds
+
+screenshot:
+  takeOnFailure: true         # Capture screenshots on failure for debugging
+  fullPage: true              # Full page screenshots for better context
+
+testExecution:
+  parallel: true              # Enable parallel execution for faster test runs
+  threadCount: 2              # Conservative thread count for production stability
+
+retry:
+  enabled: true               # Enable retries to handle transient production issues
+  maxRetries: 1               # Limited retries for production (avoid masking real issues)
+  delayBetweenRetries: 2000   # Longer delay for production (allow system recovery)
+

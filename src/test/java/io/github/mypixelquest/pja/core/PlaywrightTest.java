@@ -1,8 +1,8 @@
-package io.github.mypixelquest.pja.base;
+package io.github.mypixelquest.pja.core;
 
 import com.microsoft.playwright.*;
 import io.github.mypixelquest.pja.listeners.ScreenshotListener;
-import io.github.mypixelquest.pja.utils.ConfigReader;
+import io.github.mypixelquest.pja.util.ConfigReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.*;
@@ -14,8 +14,8 @@ import java.util.Optional;
  * Handles thread-safe browser initialization and cleanup
  */
 @Listeners({ScreenshotListener.class})
-public class BaseTest {
-    private static final Logger log = LoggerFactory.getLogger(BaseTest.class);
+public class PlaywrightTest {
+    private static final Logger log = LoggerFactory.getLogger(PlaywrightTest.class);
     private static final ConfigReader configReader = ConfigReader.getInstance();
 
     // ThreadLocal variables for parallel execution safety
@@ -150,3 +150,4 @@ public class BaseTest {
         };
     }
 }
+

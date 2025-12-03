@@ -3,14 +3,13 @@
 <suite name="Playwright Java Accelerator Test Suite" verbose="2">
     <listeners>
         <listener class-name="io.github.mypixelquest.pja.listeners.ScreenshotListener" />
-        <listener class-name="io.github.mypixelquest.pja.listeners.ParallelExecutionListener" />
-        <listener class-name="io.github.mypixelquest.pja.listeners.ConfigurationListener" />
+        <listener class-name="io.github.mypixelquest.pja.listeners.TestConfigurationListener" />
         <listener class-name="io.github.mypixelquest.pja.listeners.RetryListener" />
     </listeners>
     
     <test name="Regression Tests">
         <packages>
-            <package name="io.github.mypixelquest.pja.tests.*" />
+            <package name="io.github.mypixelquest.pja.examples.*" />
         </packages>
     </test>
 </suite>

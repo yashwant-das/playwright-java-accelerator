@@ -1,22 +1,25 @@
+# QA Environment Configuration
+# This configuration is optimized for QA testing with parallel execution enabled
+
 environment:
-  name: qa
-  baseUrl: https://playwright.dev/
+  name: qa                    # Environment identifier
+  baseUrl: https://playwright.dev/  # Base URL for the application under test
 
 browser:
-  type: chromium
-  headless: true
-  slowMo: 0
-  timeout: 30000
+  type: chromium              # Browser type: chromium, firefox, or webkit
+  headless: true              # Run browser in headless mode (no GUI)
+  slowMo: 0                   # Slow motion delay in milliseconds (0 = no delay)
+  timeout: 30000              # Default timeout in milliseconds for Playwright actions
 
 screenshot:
-  takeOnFailure: true
-  fullPage: true
+  takeOnFailure: true         # Automatically capture screenshots on test failure
+  fullPage: true              # Capture full page screenshot (true) or viewport only (false)
 
 testExecution:
-  parallel: true
-  threadCount: 3
+  parallel: true              # Enable parallel test execution
+  threadCount: 3              # Number of parallel threads to use
 
 retry:
-  enabled: true
-  maxRetries: 2
-  delayBetweenRetries: 1000
+  enabled: true               # Enable automatic test retry on failure
+  maxRetries: 2               # Maximum number of retry attempts
+  delayBetweenRetries: 1000   # Delay in milliseconds between retry attempts

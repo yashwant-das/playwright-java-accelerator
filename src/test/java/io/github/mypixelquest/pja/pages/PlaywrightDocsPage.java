@@ -9,7 +9,7 @@ import io.qameta.allure.Step;
 /**
  * Page Object for the Playwright Documentation Homepage
  */
-public class ExamplePage extends BasePage {
+public class PlaywrightDocsPage extends BasePage {
     // Base URL from config
     private static final String BASE_URL = "https://playwright.dev/";
 
@@ -37,30 +37,12 @@ public class ExamplePage extends BasePage {
     private final Locator playwrightInspectorLink;
     private final Locator traceViewerLink;
 
-    // Community Links
-    private final Locator discordLink;
-    private final Locator githubLink;
-    private final Locator twitterLink;
-    private final Locator linkedinLink;
-    private final Locator youtubeLink;
-    private final Locator stackOverflowLink;
-
-    // Example Links
-    private final Locator accessibilityInsightsLink;
-    private final Locator adobeLink;
-    private final Locator bingLink;
-    private final Locator disneyHotstarLink;
-    private final Locator outlookLink;
-    private final Locator vsCodeLink;
-    private final Locator materialUiLink;
-    private final Locator reactNavigationLink;
-
     /**
-     * Constructor for ExamplePage
+     * Constructor for PlaywrightDocsPage
      *
      * @param page Playwright Page object
      */
-    public ExamplePage(Page page) {
+    public PlaywrightDocsPage(Page page) {
         super(page);
 
         // Initialize navigation elements
@@ -86,33 +68,15 @@ public class ExamplePage extends BasePage {
         this.codegenLink = page.locator("a[href='docs/codegen']");
         this.playwrightInspectorLink = page.locator("a[href='docs/debug#playwright-inspector']");
         this.traceViewerLink = page.locator("a[href='docs/trace-viewer-intro']");
-
-        // Initialize community links
-        this.discordLink = page.locator("a[href*='discord']");
-        this.githubLink = page.locator("footer a[href*='github.com/microsoft/playwright']");
-        this.twitterLink = page.locator("a[href='https://twitter.com/playwrightweb']");
-        this.linkedinLink = page.locator("a[href='https://www.linkedin.com/company/playwrightweb']");
-        this.youtubeLink = page.locator("a[href*='youtube.com']");
-        this.stackOverflowLink = page.locator("a[href*='stackoverflow.com']");
-
-        // Initialize example links
-        this.accessibilityInsightsLink = page.locator("a[href='https://accessibilityinsights.io/']");
-        this.adobeLink = page.locator("a[href*='github.com/adobe']");
-        this.bingLink = page.locator("a[href='https://bing.com']");
-        this.disneyHotstarLink = page.locator("a[href='https://www.hotstar.com/']");
-        this.outlookLink = page.locator("a[href='https://outlook.com']");
-        this.vsCodeLink = page.locator("a[href='https://code.visualstudio.com']");
-        this.materialUiLink = page.locator("a[href*='material-ui']");
-        this.reactNavigationLink = page.locator("a[href*='react-navigation']");
     }
 
     /**
      * Navigate to the Playwright documentation home page
      * 
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Navigate to Playwright documentation")
-    public ExamplePage navigate() {
+    public PlaywrightDocsPage navigate() {
         page.navigate(BASE_URL);
         return this;
     }
@@ -120,10 +84,10 @@ public class ExamplePage extends BasePage {
     /**
      * Click Get Started button
      * 
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click Get Started button")
-    public ExamplePage clickGetStarted() {
+    public PlaywrightDocsPage clickGetStarted() {
         getStartedButton.click();
         return this;
     }
@@ -131,10 +95,10 @@ public class ExamplePage extends BasePage {
     /**
      * Open search dialog and wait for it to be visible
      * 
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Open search dialog")
-    public ExamplePage openSearch() {
+    public PlaywrightDocsPage openSearch() {
         search.click();
         // Wait for the search modal to be visible
         searchModal.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
@@ -154,10 +118,10 @@ public class ExamplePage extends BasePage {
     /**
      * Click the language dropdown to show language options
      * 
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click language dropdown")
-    public ExamplePage clickLanguageDropdown() {
+    public PlaywrightDocsPage clickLanguageDropdown() {
         languageDropdown.click();
         return this;
     }
@@ -166,10 +130,10 @@ public class ExamplePage extends BasePage {
      * Navigate to language-specific documentation
      * 
      * @param language The programming language (java, python, javascript, typescript, dotnet)
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Navigate to {language} documentation")
-    public ExamplePage navigateToLanguage(String language) {
+    public PlaywrightDocsPage navigateToLanguage(String language) {
         // First click the language dropdown
         clickLanguageDropdown();
         
@@ -205,10 +169,10 @@ public class ExamplePage extends BasePage {
      * Navigate to a tool page
      * 
      * @param tool The tool name (codegen, inspector, trace-viewer)
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Navigate to {tool}")
-    public ExamplePage navigateToTool(String tool) {
+    public PlaywrightDocsPage navigateToTool(String tool) {
         switch (tool.toLowerCase()) {
             case "codegen":
                 codegenLink.click();
@@ -221,78 +185,6 @@ public class ExamplePage extends BasePage {
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported tool: " + tool);
-        }
-        return this;
-    }
-
-    /**
-     * Navigate to community resources
-     * 
-     * @param platform The platform name (discord, github, twitter, linkedin, youtube, stackoverflow)
-     * @return ExamplePage instance for method chaining
-     */
-    @Step("Navigate to {platform}")
-    public ExamplePage navigateToCommunity(String platform) {
-        switch (platform.toLowerCase()) {
-            case "discord":
-                discordLink.click();
-                break;
-            case "github":
-                githubLink.click();
-                break;
-            case "twitter":
-                twitterLink.click();
-                break;
-            case "linkedin":
-                linkedinLink.click();
-                break;
-            case "youtube":
-                youtubeLink.click();
-                break;
-            case "stackoverflow":
-                stackOverflowLink.click();
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported platform: " + platform);
-        }
-        return this;
-    }
-
-    /**
-     * Navigate to example sites
-     * 
-     * @param site The example site name
-     * @return ExamplePage instance for method chaining
-     */
-    @Step("Navigate to example site: {site}")
-    public ExamplePage navigateToExample(String site) {
-        switch (site.toLowerCase()) {
-            case "accessibility-insights":
-                accessibilityInsightsLink.click();
-                break;
-            case "adobe":
-                adobeLink.click();
-                break;
-            case "bing":
-                bingLink.click();
-                break;
-            case "disney-hotstar":
-                disneyHotstarLink.click();
-                break;
-            case "outlook":
-                outlookLink.click();
-                break;
-            case "vscode":
-                vsCodeLink.click();
-                break;
-            case "material-ui":
-                materialUiLink.click();
-                break;
-            case "react-navigation":
-                reactNavigationLink.click();
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported example site: " + site);
         }
         return this;
     }
@@ -320,10 +212,10 @@ public class ExamplePage extends BasePage {
     /**
      * Click on Docs link in the navigation
      * 
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click Docs link")
-    public ExamplePage clickDocs() {
+    public PlaywrightDocsPage clickDocs() {
         docs.click();
         return this;
     }
@@ -331,10 +223,10 @@ public class ExamplePage extends BasePage {
     /**
      * Click on API link in the navigation
      * 
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click API link")
-    public ExamplePage clickApi() {
+    public PlaywrightDocsPage clickApi() {
         api.click();
         return this;
     }
@@ -342,10 +234,10 @@ public class ExamplePage extends BasePage {
     /**
      * Click on Community link in the navigation
      * 
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click Community link")
-    public ExamplePage clickCommunity() {
+    public PlaywrightDocsPage clickCommunity() {
         community.click();
         return this;
     }
@@ -353,11 +245,12 @@ public class ExamplePage extends BasePage {
     /**
      * Click on Skip to Content link for accessibility
      * 
-     * @return ExamplePage instance for method chaining
+     * @return PlaywrightDocsPage instance for method chaining
      */
     @Step("Click Skip to Content link")
-    public ExamplePage clickSkipToContent() {
+    public PlaywrightDocsPage clickSkipToContent() {
         skipToContent.click();
         return this;
     }
 }
+

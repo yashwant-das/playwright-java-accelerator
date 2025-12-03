@@ -1,4 +1,4 @@
-package io.github.mypixelquest.pja.utils;
+package io.github.mypixelquest.pja.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -111,4 +111,25 @@ public class ConfigReader {
     public int getTimeout() {
         return config.getBrowser().getTimeout();
     }
+    
+    /**
+     * Check if screenshots should be taken on test failure
+     * 
+     * @return True if screenshots should be taken on failure, false otherwise
+     */
+    public boolean shouldTakeScreenshotOnFailure() {
+        var screenshotConfig = config.getScreenshot();
+        return screenshotConfig != null && screenshotConfig.isTakeOnFailure();
+    }
+    
+    /**
+     * Check if full page screenshots should be captured
+     * 
+     * @return True if full page screenshots should be captured, false for viewport only
+     */
+    public boolean shouldCaptureFullPageScreenshot() {
+        var screenshotConfig = config.getScreenshot();
+        return screenshotConfig != null && screenshotConfig.isFullPage();
+    }
 }
+
