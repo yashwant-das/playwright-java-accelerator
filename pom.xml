@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.mypixelquest</groupId>
-    <artifactId>playwright-java-accelerator</artifactId>
+    <artifactId>web-playwright-java-framework</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Playwright Java Accelerator</name>
+    <name>Web Playwright Java Framework</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -142,9 +142,9 @@
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
                         <allure.link.issue.pattern>
-                            https://github.com/yashwant-das/playwright-java-accelerator/issues/{}
+                            https://github.com/yashwant-das/web-playwright-java-framework/issues/{}
                         </allure.link.issue.pattern>
-                        <allure.link.tms.pattern>https://github.com/yashwant-das/playwright-java-accelerator/issues/{}
+                        <allure.link.tms.pattern>https://github.com/yashwant-das/web-playwright-java-framework/issues/{}
                         </allure.link.tms.pattern>
                         <project.build.directory>${project.build.directory}</project.build.directory>
                     </systemPropertyVariables>

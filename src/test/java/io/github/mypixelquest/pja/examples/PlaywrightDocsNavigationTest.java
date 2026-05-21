@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Test class for Playwright.dev website using PlaywrightDocsPage
  * Demonstrates basic navigation and interaction patterns
  */
-@Epic("Playwright Java Accelerator")
+@Epic("Web Playwright Java Framework")
 @Feature("Playwright Documentation Navigation")
 public class PlaywrightDocsNavigationTest extends PlaywrightTest {
     private static final Logger log = LoggerFactory.getLogger(PlaywrightDocsNavigationTest.class);

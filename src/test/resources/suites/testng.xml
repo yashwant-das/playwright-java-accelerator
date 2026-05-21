@@ -14,7 +14,7 @@
     - Run via IDE: Right-click on this file and select "Run"
     - Environment can be set via system property: -Denvironment=qa (default: qa)
 -->
-<suite name="Playwright Java Accelerator Test Suite" verbose="2">
+<suite name="Web Playwright Java Framework Test Suite" verbose="2">
     <listeners>
         <listener class-name="io.github.mypixelquest.pja.listeners.ScreenshotListener"/>
         <listener class-name="io.github.mypixelquest.pja.listeners.TestConfigurationListener"/>
